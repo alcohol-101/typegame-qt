@@ -1,12 +1,22 @@
 // HighScoreDialog.cpp
-#include "HighScoreDialog.h"
-#include "TriStateButton.h"
+#include "highscoredialog.h"
+#include "tristatebutton.h"
 #include <QFile>
 #include <QTextStream>
 #include <QPainter>
 #include <QApplication>
 #include <QScreen>
 #include <QDebug>
+
+// ========== 常量 ==========
+constexpr int MAX_DISPLAY_SCORES = 9;
+constexpr double SCORE_X_RATIO = 250.0 / 800.0;
+constexpr double SCORE_Y_BASE_RATIO = 154.0 / 600.0;
+constexpr double SCORE_Y_STEP_RATIO = 36.0 / 600.0;
+constexpr double SCORE_ITEM_WIDTH_RATIO = 345.0 / 800.0;
+constexpr double SCORE_ITEM_HEIGHT_RATIO = 33.0 / 600.0;
+// =========================
+
 
 HighScoreDialog::HighScoreDialog(const QString& scoreFilePath, QWidget* parent)
     : QDialog(parent), m_filePath(scoreFilePath)
@@ -61,8 +71,8 @@ void HighScoreDialog::loadScores()
     std::sort(m_entries.begin(), m_entries.end(), [](const auto& a, const auto& b) {
         return a.second > b.second;
         });
-    if (m_entries.size() > 9)
-        m_entries = m_entries.mid(0, 9);
+    if (m_entries.size() > MAX_DISPLAY_SCORES)
+        m_entries = m_entries.mid(0, MAX_DISPLAY_SCORES);
 
     update(); // 触发重绘
 }
@@ -85,8 +95,8 @@ void HighScoreDialog::addScore(const QString& name, int score)
     std::sort(m_entries.begin(), m_entries.end(), [](const auto& a, const auto& b) {
         return a.second > b.second;
         });
-    if (m_entries.size() > 9)
-        m_entries = m_entries.mid(0, 9);
+    if (m_entries.size() > MAX_DISPLAY_SCORES)
+        m_entries = m_entries.mid(0, MAX_DISPLAY_SCORES);
     saveScores();
     update(); // 触发重绘
 }
@@ -121,11 +131,11 @@ void HighScoreDialog::paintEvent(QPaintEvent* event)
     // 绘制分数列表
     painter.setFont(font);
 
-    for (int i = 0; i < 9; ++i) {
-        int x = w * 250 / 800;
-        int y = h * (154 + 36 * i) / 600;
-        int itemWidth = w * 345 / 800;
-        int itemHeight = h * 33 / 600;
+    for (int i = 0; i < MAX_DISPLAY_SCORES; ++i) {
+        int x = w * SCORE_X_RATIO;
+        int y = h * (SCORE_Y_BASE_RATIO + SCORE_Y_STEP_RATIO * i);
+        int itemWidth = w * SCORE_ITEM_WIDTH_RATIO;
+        int itemHeight = h * SCORE_ITEM_HEIGHT_RATIO;
 
         if (i < m_entries.size()) {
             // 排名和名字（左对齐）

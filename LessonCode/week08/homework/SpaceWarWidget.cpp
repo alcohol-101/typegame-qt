@@ -1,9 +1,9 @@
-#include "SpaceWarWidget.h"
-#include "TriStateButton.h"
-#include "SpaceSettingsDialog.h"
-#include "HighScoreDialog.h"
-#include "NameInputDialog.h"
-#include "ExitConfirmDialog.h"
+#include "spacewarwidget.h"
+#include "tristatebutton.h"
+#include "spacesettingsdialog.h"
+#include "highscoredialog.h"
+#include "nameinputdialog.h"
+#include "exitconfirmdialog.h"
 
 #include <QPainter>
 #include <QKeyEvent>
@@ -21,6 +21,22 @@
 
 // ========== 辅助宏 ==========
 constexpr double PI = 3.14159265358979323846;
+
+// ========== 游戏常量 ==========
+constexpr double bulletSpeed = 40.0;
+constexpr double turnRate = 0.2; // turnRate 已改为全局 constexpr
+constexpr double SPAWN_BASE_SPEED = 2.0;
+constexpr double SPAWN_SPEED_MULTIPLIER = 1.0;
+constexpr double METEORITE_BASE_SPEED = 2.0;
+constexpr double METEORITE_SPEED_MULTIPLIER = 1.2;
+constexpr double OSC_AMPLITUDE = 200.0;
+constexpr double OSC_OMEGA = 1.0;
+constexpr double OSC_TIME_STEP = 0.05;
+constexpr int MAX_REWARD_WORDS = 1;
+constexpr double DEFAULT_REWARD_WORD_SPEED = 15.0;
+constexpr int GAME_OVER_DELAY_MS = 500;
+// =================================
+
 
 SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     : QWidget(parent)
@@ -463,7 +479,7 @@ void SpaceWarWidget::spawnObject() {
         obj.phaseOneDone = false;
         obj.oscillationTime = 0.0;
 
-        double baseSpeed = 2.0 + m_speedLevel * 1.0;
+        double baseSpeed = SPAWN_BASE_SPEED + m_speedLevel * SPAWN_SPEED_MULTIPLIER;
         obj.fallSpeed = baseSpeed;
         obj.horizontalSpeed = leftSide ? baseSpeed : -baseSpeed;
 
@@ -491,7 +507,7 @@ void SpaceWarWidget::spawnObject() {
         obj.pos = QPointF(QRandomGenerator::global()->bounded(width() - 60) + 30, -30);
         obj.frame = 0;
         obj.frameCount = 12;
-        obj.fallSpeed = 2.0 + m_speedLevel * 1.2;
+        obj.fallSpeed = METEORITE_BASE_SPEED + m_speedLevel * METEORITE_SPEED_MULTIPLIER;
         obj.horizontalSpeed = 0;
 
         m_objects.append(obj);
@@ -544,9 +560,9 @@ void SpaceWarWidget::updateObjects() {
             }
 
             else {
-                obj.oscillationTime += 0.05;
-                double oscAmplitude = 200;
-                double oscOmega = 1.0;
+                obj.oscillationTime += OSC_TIME_STEP;
+                double oscAmplitude = OSC_AMPLITUDE;
+                double oscOmega = OSC_OMEGA;
                 double offsetX = oscAmplitude * sin(oscOmega * obj.oscillationTime);
                 obj.pos.setX(obj.oscillationCenterX + offsetX);
                 obj.pos.ry() += obj.fallSpeed;
@@ -599,7 +615,7 @@ void SpaceWarWidget::updateBullets() {
         while (diff < -PI) diff += 2 * PI;
 
         // 限制转向速率
-        constexpr double turnRate = 0.2;
+        
         bullet.currentAngle += qBound(-turnRate, diff, turnRate);  // ← 更新存储的角度
 
         // 移动
@@ -701,7 +717,7 @@ void SpaceWarWidget::checkEndGame() {
 }
 
 void SpaceWarWidget::handleGameOver() {
-    QTimer::singleShot(500, this, [this]() {
+    QTimer::singleShot(GAME_OVER_DELAY_MS, this, [this]() {
        
         if (m_score > 0) {
             NameInputDialog nameDlg(this);
@@ -778,7 +794,7 @@ void SpaceWarWidget::onWordSpawnTimer() {
 
 void SpaceWarWidget::spawnRewardWord() {
     if ( !m_rewardEnabled) return;
-    if (m_rewardWords.size() >= 1) return;
+    if (m_rewardWords.size() >= MAX_REWARD_WORDS) return;
 
     
     QString word = generateRewardWord();
@@ -787,7 +803,7 @@ void SpaceWarWidget::spawnRewardWord() {
     rw.text = word;
     rw.currentIndex = 0;
     rw.pos = QPointF(width() , height() * 0.3);
-    rw.speedX = 15.0;
+    rw.speedX = DEFAULT_REWARD_WORD_SPEED;
     rw.finished = false;
     m_rewardWords.append(rw);
     if (m_bonusSound->isLoaded()) m_bonusSound->play();

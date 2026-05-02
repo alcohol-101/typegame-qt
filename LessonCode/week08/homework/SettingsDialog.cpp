@@ -1,4 +1,4 @@
-#include "SettingsDialog.h"
+#include "settingsdialog.h"
 
 
 #include <QVBoxLayout>
@@ -10,7 +10,17 @@
 #include <QEvent>  
 #include <QMouseEvent>
 
-#include "ExitConfirmDialog.h"
+#include "exitconfirmdialog.h"
+
+// ========== 布局常量 ==========
+constexpr double BUTTON_WIDTH_RATIO = 0.17778;
+constexpr double BUTTON_HEIGHT_RATIO = 0.09333;
+constexpr double OK_BTN_X_RATIO = 0.38889;
+constexpr double CANCEL_BTN_X_RATIO = 0.58889;
+constexpr double DEFAULT_BTN_X_RATIO = 0.78889;
+constexpr double BTN_Y_RATIO = 0.85333;
+// ==============================
+
 
 SettingsDialog::SettingsDialog(QWidget* parent)
     : QDialog(parent)
@@ -151,8 +161,8 @@ void SettingsDialog::setupUi()
     qreal now_w = this->width();
     qreal now_h = this->height();
 
-    qreal w = now_w * 0.17778;
-    qreal h = now_h * 0.09333;
+    qreal w = now_w * BUTTON_WIDTH_RATIO;
+    qreal h = now_h * BUTTON_HEIGHT_RATIO;
 
     okBtn->setFixedSize(w, h);
     okBtn->setStyleSheet(R"(
@@ -330,9 +340,9 @@ void SettingsDialog::resizeEvent(QResizeEvent* event)
     int w = width();
     int h = height();
 
-    okBtn->move(w * 0.38889, h * 0.85333);
-    cancelBtn->move(w * 0.58889, h * 0.85333);
-    defaultBtn->move(w * 0.78889, h * 0.85333);
+    okBtn->move(w * OK_BTN_X_RATIO, h * BTN_Y_RATIO);
+    cancelBtn->move(w * CANCEL_BTN_X_RATIO, h * BTN_Y_RATIO);
+    defaultBtn->move(w * DEFAULT_BTN_X_RATIO, h * BTN_Y_RATIO);
 }
 
 bool SettingsDialog::eventFilter(QObject* obj, QEvent* event)

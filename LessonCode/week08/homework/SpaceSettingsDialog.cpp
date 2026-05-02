@@ -1,11 +1,21 @@
 // SpaceSettingsDialog.cpp
-#include "SpaceSettingsDialog.h"
-#include "ExitConfirmDialog.h"
+#include "spacesettingsdialog.h"
+#include "exitconfirmdialog.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
 #include <QMouseEvent>
+
+// ========== 布局常量 ==========
+constexpr double BUTTON_WIDTH_RATIO = 0.17778;
+constexpr double BUTTON_HEIGHT_RATIO = 0.09333;
+constexpr double OK_BTN_X_RATIO = 0.38889;
+constexpr double CANCEL_BTN_X_RATIO = 0.58889;
+constexpr double DEFAULT_BTN_X_RATIO = 0.78889;
+constexpr double BTN_Y_RATIO = 0.85333;
+// ==============================
+
 
 SpaceSettingsDialog::SpaceSettingsDialog(QWidget *parent)
     : QDialog(parent)
@@ -90,8 +100,8 @@ void SpaceSettingsDialog::setupUi()
     connect(m_rewardCheckBox, &QCheckBox::toggled, this, &SpaceSettingsDialog::onRewardToggled);
 
     // 按钮
-    qreal w = width() * 0.17778;
-    qreal h = height() * 0.09333;
+    qreal w = width() * BUTTON_WIDTH_RATIO;
+    qreal h = height() * BUTTON_HEIGHT_RATIO;
     okBtn = new QPushButton(this);
     okBtn->setFixedSize(w, h);
     okBtn->setStyleSheet("QPushButton{ border-image: url(:/res/image/Common/Images/OK.png) 0 144 0 0; border:none; }"
@@ -210,9 +220,9 @@ void SpaceSettingsDialog::onDefaultClicked()
 void SpaceSettingsDialog::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-    okBtn->move(width() * 0.38889, height() * 0.85333);
-    cancelBtn->move(width() * 0.58889, height() * 0.85333);
-    defaultBtn->move(width() * 0.78889, height() * 0.85333);
+    okBtn->move(width() * OK_BTN_X_RATIO, height() * BTN_Y_RATIO);
+    cancelBtn->move(width() * CANCEL_BTN_X_RATIO, height() * BTN_Y_RATIO);
+    defaultBtn->move(width() * DEFAULT_BTN_X_RATIO, height() * BTN_Y_RATIO);
 }
 
 bool SpaceSettingsDialog::eventFilter(QObject *obj, QEvent *event)

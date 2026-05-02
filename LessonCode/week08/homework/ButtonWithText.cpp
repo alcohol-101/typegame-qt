@@ -1,4 +1,4 @@
-﻿#include "ButtonWithText.h"
+﻿#include "buttonwithtext.h"
 #include <QEvent>
 #include <QMouseEvent>
 #include <QPixmap>

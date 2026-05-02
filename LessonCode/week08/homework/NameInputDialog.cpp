@@ -1,5 +1,5 @@
 // NameInputDialog.cpp
-#include "NameInputDialog.h"
+#include "nameinputdialog.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>

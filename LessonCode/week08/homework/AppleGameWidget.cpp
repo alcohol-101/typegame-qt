@@ -1,9 +1,37 @@
-#include "AppleGameWidget.h"
+#include "applegamewidget.h"
 
 
 
-#include "SettingsDialog.h"
-#include "ExitConfirmDialog.h"
+#include "settingsdialog.h"
+#include "exitconfirmdialog.h"
+
+
+// ========== constexpr 常量 ==========
+constexpr double APPLE_WIDTH_RATIO = 200.0 / 2560.0;
+constexpr double APPLE_HEIGHT_RATIO = 200.0 / 1440.0;
+constexpr double SMALL_APPLE_WIDTH_RATIO = 110.0 / 2560.0;
+constexpr double SMALL_APPLE_HEIGHT_RATIO = 120.0 / 1440.0;
+constexpr double EXIT_BTN_WIDTH_RATIO = 300.0 / 2560.0;
+constexpr double EXIT_BTN_HEIGHT_RATIO = 128.0 / 1440.0;
+constexpr int APPLE_SPAWN_RATE = 5;
+constexpr int SPAWN_PROBABILITY = 100;
+constexpr double BOTTOM_THRESHOLD_RATIO = 7.0 / 10.0;
+constexpr double SPEED_FACTOR_BASE = 0.2;
+constexpr double SPEED_FACTOR_RANGE = 1.8;
+constexpr double ALPHABET_SIZE = 25.0;
+constexpr double BASE_SPEED_MIN = 2.0;
+constexpr double BASE_SPEED_MULTIPLIER = 1.5;
+constexpr int BAD_APPLE_DURATION_MS = 500;
+constexpr double BASKET_WIDTH_RATIO = 360.0 / 2560.0;
+constexpr double BASKET_HEIGHT_RATIO = 320.0 / 1440.0;
+constexpr double BASKET_MARGIN_RATIO = 80.0 / 2560.0;
+constexpr int VERTICAL_OVERLAP_DIVISOR = 2;
+constexpr int BASKET_INNER_MARGIN = 40;
+constexpr int MIN_STEP = 1;
+constexpr int MAX_SMALL_APPLES = 8;
+constexpr int STEP_DIVISOR = 8;
+constexpr int TARGET_OFFSET = 10;
+// =====================================
 
 AppleGameWidget::AppleGameWidget(QWidget* parent)
     : QWidget(parent)
@@ -36,8 +64,8 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
    
 
     // 设置苹果绘制大小
-    m_appleSize = QSize(200.0/2560.0*w_primary, 200.0 / 1440.0 * h_primary);
-    m_smallAppleSize = QSize(110.0 / 2560.0 * w_primary, 120.0 / 1440.0 * h_primary);
+    m_appleSize = QSize(APPLE_WIDTH_RATIO * w_primary, APPLE_HEIGHT_RATIO * h_primary);
+    m_smallAppleSize = QSize(SMALL_APPLE_WIDTH_RATIO * w_primary, SMALL_APPLE_HEIGHT_RATIO * h_primary);
 
     // 创建底部控制按钮区域
     QWidget* controlWidget = new QWidget(this);
@@ -48,7 +76,7 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
 
     // 退出按钮（左下角）
     m_exitBtn = new QPushButton(controlWidget);
-    m_exitBtn->setFixedSize(300 / 2560.0 * w_primary, 128 / 1440.0 * h_primary);
+    m_exitBtn->setFixedSize(EXIT_BTN_WIDTH_RATIO * w_primary, EXIT_BTN_HEIGHT_RATIO * h_primary);
     m_exitBtn->setStyleSheet(
         "QPushButton {"
         "   border-image: url(:/res/image/Common/Images/PUBLIC_EXIT.png)0 188 0 0;"
@@ -314,13 +342,13 @@ void AppleGameWidget::onUpdateTimer()
         return;
 
     // 随机生成新苹果（概率控制）
-    if ((m_random.bounded(100) < 5 || m_apples.size() < m_random.bounded(1 + m_random.bounded(m_speedLevel) / 2)) && m_apples.size() < m_maxAppleCount) {
+    if ((m_random.bounded(SPAWN_PROBABILITY) < APPLE_SPAWN_RATE || m_apples.size() < m_random.bounded(1 + m_random.bounded(m_speedLevel) / 2)) && m_apples.size() < m_maxAppleCount) {
         generateApple();
     }
 
     // 移动苹果
 
-    qreal bottomThreshold = height() * 7.0 / 10.0;
+    qreal bottomThreshold = height() * BOTTOM_THRESHOLD_RATIO;
 
     for (int i = m_apples.size() - 1; i >= 0; --i) {
         Apple& apple = m_apples[i];
@@ -329,10 +357,10 @@ void AppleGameWidget::onUpdateTimer()
 
         // 基于字母计算速度因子（0.2 ~ 2 倍速）
         int letterIndex = apple.letter.toLatin1() - 'A';  // A=0, B=1, ..., Z=25
-        qreal speedFactor = 0.2 + (letterIndex / 25.0) * 1.8;
+        qreal speedFactor = SPEED_FACTOR_BASE + (letterIndex / ALPHABET_SIZE) * SPEED_FACTOR_RANGE;
 
         // 基础速度 + 字母速度变化
-        qreal baseSpeed = 2.0 + m_random.bounded(m_speedLevel) * 1.5;
+        qreal baseSpeed = BASE_SPEED_MIN + m_random.bounded(m_speedLevel) * BASE_SPEED_MULTIPLIER;
         qreal speed = baseSpeed * speedFactor;
 
         apple.pos.ry() += speed;
@@ -435,7 +463,7 @@ void AppleGameWidget::convertAppleToBad(Apple& apple)
     apple.isBad = true;
     apple.badTimer = new QTimer(this);
     apple.badTimer->setSingleShot(true);
-    apple.badTimer->start(500);
+    apple.badTimer->start(BAD_APPLE_DURATION_MS);
     connect(apple.badTimer, &QTimer::timeout, this, &AppleGameWidget::onAppleBadTimeout);
     // 注意：不立即增加badCount，等定时器触发再增加
 }
@@ -443,10 +471,10 @@ void AppleGameWidget::convertAppleToBad(Apple& apple)
 void AppleGameWidget::updateBasketSmallApples()
 {
     if (m_targetAppleCount <= 0) return;
-    int step = (m_targetAppleCount - 10) / 8;
-    if (step <= 0) step = 1;
+    int step = (m_targetAppleCount - TARGET_OFFSET) / STEP_DIVISOR;
+    if (step <= 0) step = MIN_STEP;
     int count = m_successCount / step;
-    m_smallAppleCount = qBound(0, count, 8);
+    m_smallAppleCount = qBound(0, count, MAX_SMALL_APPLES);
 }
 
 void AppleGameWidget::resetGameState()
@@ -581,9 +609,9 @@ void AppleGameWidget::drawApples(QPainter& painter)
 void AppleGameWidget::drawBasketAndSmallApples(QPainter& painter)
 {
     // 篮子绘制在右下角
-    int basketWidth = 360.0/2560.0*w_primary;
-    int basketHeight = 320.0/1440.0*h_primary;
-    int margin = 80 / 2560.0 * w_primary;
+    int basketWidth = BASKET_WIDTH_RATIO * w_primary;
+    int basketHeight = BASKET_HEIGHT_RATIO * h_primary;
+    int margin = BASKET_MARGIN_RATIO * w_primary;
     m_basketPos = QPoint(width() - basketWidth - margin, height() - basketHeight - margin - 60);
 
     painter.drawPixmap(QRect(m_basketPos, QSize(basketWidth, basketHeight)), m_basketPixmap);
@@ -594,10 +622,10 @@ void AppleGameWidget::drawBasketAndSmallApples(QPainter& painter)
     int smallH = m_smallAppleSize.height();
 
     // 垂直重叠量
-    int verticalOverlap = smallH / 2;
+    int verticalOverlap = smallH / VERTICAL_OVERLAP_DIVISOR;
 
     // 计算篮子内部区域
-    int basketInnerMargin = 40;
+    int basketInnerMargin = BASKET_INNER_MARGIN;
     int basketInnerX = m_basketPos.x() + basketInnerMargin;
     int basketInnerY = m_basketPos.y() + basketInnerMargin;
     int basketInnerWidth = basketWidth - 2 * basketInnerMargin;

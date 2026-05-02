@@ -3,7 +3,7 @@
 #include<QDebug>
 #include "mainwindow.h"
 
-#include "ButtonWithText.h"
+#include "buttonwithtext.h"
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);

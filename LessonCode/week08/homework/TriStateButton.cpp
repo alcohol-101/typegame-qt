@@ -1,5 +1,5 @@
 // TriStateButton.cpp
-#include "TriStateButton.h"
+#include "tristatebutton.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>

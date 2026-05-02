@@ -10,9 +10,9 @@
 #include<QScreen>
 #include<QApplication>
 
-#include "ButtonWithText.h"
-#include "AppleGameWidget.h"
-#include "SpaceWarWidget.h"
+#include "buttonwithtext.h"
+#include "applegamewidget.h"
+#include "spacewarwidget.h"
 
 using namespace std;
 MainWindow::MainWindow(QWidget *parent)

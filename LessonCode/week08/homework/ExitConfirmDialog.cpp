@@ -1,9 +1,15 @@
-#include "ExitConfirmDialog.h"
+#include "exitconfirmdialog.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QApplication>
 #include <QScreen>
 #include <QMouseEvent>
+
+// ========== 常量 ==========
+constexpr double TRIPLE_STATE_BTN_DIVISOR = 3.0;
+constexpr int BORDER_IMAGE_MULTIPLIER = 2;
+// ==========================
+
 
 ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString left_url, QString right_url, QString text)
     : QDialog(parent)
@@ -61,8 +67,8 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     QPixmap* left_map = new QPixmap(left_url);
     QPixmap* right_map = new QPixmap(right_url);
 
-    qreal left_width = left_map->width() / 3;
-    qreal right_width = right_map->width() / 3;
+    qreal left_width = left_map->width() / TRIPLE_STATE_BTN_DIVISOR;
+    qreal right_width = right_map->width() / TRIPLE_STATE_BTN_DIVISOR;
 
     // 退出按钮
     QPushButton* confirmBtn = new QPushButton(this);
@@ -75,7 +81,7 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
          QPushButton:hover {
             border-image: url("%1") 0 %2 0 %2;
         }
-    )").arg(left_url).arg(left_width).arg(2 * left_width);
+    )").arg(left_url).arg(left_width).arg(BORDER_IMAGE_MULTIPLIER * left_width);
     confirmBtn->setStyleSheet(confirmStyle);
     btnLayout->addWidget(confirmBtn);
     btnLayout->addStretch();
@@ -91,7 +97,7 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
         QPushButton:hover {
             border-image: url("%1") 0 %2 0 %2;
         }
-    )").arg(right_url).arg(right_width).arg(2 * right_width);
+    )").arg(right_url).arg(right_width).arg(BORDER_IMAGE_MULTIPLIER * right_width);
     continueBtn->setStyleSheet(confirmStyle);
 
     btnLayout->addWidget(continueBtn);
@@ -185,9 +191,9 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     QPixmap* min_map = new QPixmap(min_url);
     QPixmap* right_map = new QPixmap(right_url);
 
-    qreal left_width = left_map->width() / 3;
+    qreal left_width = left_map->width() / TRIPLE_STATE_BTN_DIVISOR;
     qreal min_width = min_map->width() / 3;
-    qreal right_width = right_map->width() / 3;
+    qreal right_width = right_map->width() / TRIPLE_STATE_BTN_DIVISOR;
 
     // 左按钮
     QPushButton* confirmBtn = new QPushButton(this);
@@ -200,7 +206,7 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
          QPushButton:hover {
             border-image: url("%1") 0 %2 0 %2;
         }
-    )").arg(left_url).arg(left_width).arg(2 * left_width);
+    )").arg(left_url).arg(left_width).arg(BORDER_IMAGE_MULTIPLIER * left_width);
     confirmBtn->setStyleSheet(confirmStyle);
     btnLayout->addWidget(confirmBtn);
     btnLayout->addStretch();
@@ -232,7 +238,7 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
         QPushButton:hover {
             border-image: url("%1") 0 %2 0 %2;
         }
-    )").arg(right_url).arg(right_width).arg(2 * right_width);
+    )").arg(right_url).arg(right_width).arg(BORDER_IMAGE_MULTIPLIER * right_width);
     continueBtn->setStyleSheet(confirmStyle);
     btnLayout->addWidget(continueBtn);
     btnLayout->addStretch();
