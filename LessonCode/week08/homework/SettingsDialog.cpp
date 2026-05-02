@@ -64,7 +64,7 @@ void SettingsDialog::setupUi()
 
     // 等级 0-9
     QHBoxLayout* levelLayout = new QHBoxLayout();
-    QLabel* levelLabel = new QLabel("游戏等级 :", this);
+    QLabel* levelLabel = new QLabel(tr("游戏等级 :"), this);
     m_levelSlider = new QSlider(Qt::Horizontal, this);
     m_levelSlider->setRange(0, 9);
 
@@ -81,7 +81,7 @@ void SettingsDialog::setupUi()
 
     // 过关苹果数量 10-900
     QHBoxLayout* targetLayout = new QHBoxLayout();
-    QLabel* targetLabel = new QLabel("过关苹果数 :", this);
+    QLabel* targetLabel = new QLabel(tr("过关苹果数 :"), this);
     m_targetSlider = new QSlider(Qt::Horizontal, this);
     m_targetSlider->setRange(10, 900);
 
@@ -98,7 +98,7 @@ void SettingsDialog::setupUi()
 
     // 失败苹果数量 5-50
     QHBoxLayout* badLayout = new QHBoxLayout();
-    QLabel* badLabel = new QLabel("失败苹果数 :", this);
+    QLabel* badLabel = new QLabel(tr("失败苹果数 :"), this);
     m_badSlider = new QSlider(Qt::Horizontal, this);
     m_badSlider->setRange(5, 50);
 
@@ -116,7 +116,7 @@ void SettingsDialog::setupUi()
 
     // 同屏苹果数量 1-20
     QHBoxLayout* maxAppleLayout = new QHBoxLayout();
-    QLabel* maxAppleLabel = new QLabel("最多同屏苹果数 :", this);
+    QLabel* maxAppleLabel = new QLabel(tr("最多同屏苹果数 :"), this);
     m_maxAppleSlider = new QSlider(Qt::Horizontal, this);
     m_maxAppleSlider->setRange(1, 20);
     m_maxAppleValueLabel = new QLabel("10", this);
@@ -132,7 +132,7 @@ void SettingsDialog::setupUi()
 
     // 音效开关
     QHBoxLayout* soundLayout = new QHBoxLayout();
-    QLabel* soundLabel = new QLabel("音效开关 :", this);
+    QLabel* soundLabel = new QLabel(tr("音效开关 :"), this);
     m_soundCheckBox = new QCheckBox(this);
     m_soundCheckBox->setChecked(true);
     soundLayout->addStretch(16);
@@ -274,7 +274,7 @@ void SettingsDialog::onSoundToggled(bool checked)
 void SettingsDialog::onOkClicked()
 {
     ExitConfirmDialog dialog(this, ":/res/image/Common/Images/MAIN_DLG_BG.png", ":/res/image/Common/Images/YES.png",
-        ":/res/image/Common/Images/NO.png", "设置改变是否立即生效？");
+        ":/res/image/Common/Images/NO.png", tr("设置改变是否立即生效？"));
     dialog.exec();
 
     if (!dialog.isConfirmed()) {

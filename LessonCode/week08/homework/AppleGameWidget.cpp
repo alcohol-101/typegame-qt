@@ -140,10 +140,12 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
     m_bgmPlayer->setMedia(QUrl("qrc:/res/image/Apple/Sounds/APPLE_BG.mp3"));
     m_bgmPlayer->setVolume(50); // 音量 0-100
     // 设置循环播放（QMediaPlayer 默认不循环，通过信号实现）
-    connect(m_bgmPlayer, &QMediaPlayer::mediaStatusChanged, this, [this](QMediaPlayer::MediaStatus status) {
-        if (status == QMediaPlayer::EndOfMedia) {
-            if (m_soundEnabled) m_bgmPlayer->play();
-        }
+    connect(m_bgmPlayer, &QMediaPlayer::mediaStatusChanged, this, [this](QMediaPlayer::MediaStatus status) 
+        {
+            if (status == QMediaPlayer::EndOfMedia) 
+            {
+                if (m_soundEnabled) m_bgmPlayer->play();
+            }
         });
 
     // ========== 悬浮音效初始化 ==========
@@ -294,7 +296,7 @@ void AppleGameWidget::onExitClicked()
 
     // 创建自定义按钮
     ExitConfirmDialog dialog(this, ":/res/image/Common/Images/MAIN_DLG_BG.png", ":/res/image/Common/Images/MAIN_DLG_EXIT.png",
-        ":/res/image/Common/Images/MAIN_DLG_REPLAY.png", "你真的要退出吗？");
+        ":/res/image/Common/Images/MAIN_DLG_REPLAY.png", tr("你真的要退出吗？"));
     dialog.exec();  // 模态显示
 
     if (dialog.isConfirmed()) {
@@ -479,11 +481,11 @@ void AppleGameWidget::checkGameOver()
         // 计算准确率
         int total = m_successCount + m_badCount;
         double accuracy = total > 0 ? (m_successCount * 100.0 / total) : 0.0;
-        QString accuracyText = QString("准确率: %1%").arg(accuracy, 0, 'f', 1);
+        QString accuracyText = tr("准确率: %1%").arg(accuracy, 0, 'f', 1);
 
         QString msg;
         if (victory) {
-            msg = QString("恭喜，您通过了！\n%1").arg(accuracyText);
+            msg = tr("恭喜，您通过了！\n%1").arg(accuracyText);
             ExitConfirmDialog success_dialog(this,
                 ":/res/image/Apple/Images/APPLE_DLG_BG.png",
                 ":/res/image/Apple/Images/APPLE_DLG_REPLAY.png",
@@ -515,7 +517,7 @@ void AppleGameWidget::checkGameOver()
             }
         }
         else {
-            msg = QString("您认输吧\n%1").arg(accuracyText);
+            msg = tr("您认输吧\n%1").arg(accuracyText);
             ExitConfirmDialog fail_dialog(this,
                 ":/res/image/Apple/Images/APPLE_DLG_BG.png",
                 ":/res/image/Apple/Images/APPLE_DLG_REPLAY.png",

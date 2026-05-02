@@ -11,19 +11,19 @@ NameInputDialog::NameInputDialog(QWidget *parent)
     setWindowFlags(Qt::Dialog);
     
     setFixedSize(400,200);
-    setWindowTitle("高分英雄");
+    setWindowTitle(tr("高分英雄"));
     QVBoxLayout *layout = new QVBoxLayout(this);
     QHBoxLayout* layout_1 = new QHBoxLayout();
     layout->setContentsMargins(30, 30, 30, 30);
-    QLabel *label = new QLabel("请输入你的名字:", this);
+    QLabel *label = new QLabel(tr("请输入你的名字:"), this);
     label->setStyleSheet("color: black; font-size: 18px; background: transparent;");
     layout_1->addWidget(label);
 
     QVBoxLayout *btnLayout = new QVBoxLayout;
-    m_okBtn = new QPushButton("OK",this);
+    m_okBtn = new QPushButton(tr("确定"),this);
     m_okBtn->setFixedSize(92,46);
     
-    m_cancelBtn = new QPushButton("Cancel",this);
+    m_cancelBtn = new QPushButton(tr("取消"),this);
     m_cancelBtn->setFixedSize(92, 46);
    
     btnLayout->addStretch();

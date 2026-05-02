@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
         iconLabel->setPixmap(pixmap);
     } else {
         // 如果图标加载失败，显示一个默认文字
-        iconLabel->setText("加载失败");
+        iconLabel->setText(tr("加载失败"));
         iconLabel->setStyleSheet("font-size: 18px;");
     }
     titleLayout->addWidget(iconLabel);
@@ -106,8 +106,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 连接按钮信号
     connect(closeBtn, &QPushButton::clicked, []() {
-            qDebug() << "调用exit(0)退出程序";
-             exit(0);  // 立即退出，返回码0
+             exit(0); 
          });
     connect(minimizeBtn, &QPushButton::clicked, this, &QMainWindow::showMinimized);
     connect(maximizeBtn, &QPushButton::clicked, [this, maximizeBtn]() {
@@ -120,8 +119,6 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    //----------------------------------------------------------------------------------
-
     // 4. 创建内容区域
     QWidget *contentArea = new QWidget();
     contentArea->setStyleSheet("QWidget { background-color: #edf7ff; }");
@@ -133,7 +130,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //界面左侧经典游戏
     QString gameString=QChar(0x25B6);
-    gameString+=" 经典游戏";
+    gameString+= tr(" 经典游戏");
     QLabel* gameLabel=new QLabel(gameString);
     QFont font;
     font.setBold(true);
@@ -142,32 +139,27 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //五个游戏
-    // QWidget* fiveGame=new QWidget();
-    // QHBoxLayout* grid=new QHBoxLayout(fiveGame);
-
-    // contentLayout->addWidget(fiveGame);
-
     QHBoxLayout* layout = new QHBoxLayout();
 
     // 创建几个不同样式的按钮
     QString photo(":/res/image/live.png");
-    ButtonWithText* btn1 = new ButtonWithText(photo, "生死时速");
+    ButtonWithText* btn1 = new ButtonWithText(photo, tr("生死时速"));
     btn1->setButtonSize(250.0/2560.0*w_primary,270.0/1440.0*h_primary);
 
     photo=":/res/image/mouse.png";
-    ButtonWithText* btn2 = new ButtonWithText(photo, "鼠的故事");
+    ButtonWithText* btn2 = new ButtonWithText(photo, tr("鼠的故事"));
     btn2->setButtonSize(250.0 / 2560.0 * w_primary, 270.0 / 1440.0 * h_primary);
 
     photo=":/res/image/apple.png";
-    ButtonWithText* btn3 = new ButtonWithText(photo, "拯救苹果");
+    ButtonWithText* btn3 = new ButtonWithText(photo, tr("拯救苹果"));
     btn3->setButtonSize(250.0 / 2560.0 * w_primary, 270.0 / 1440.0 * h_primary);
 
     photo=":/res/image/space.png";
-    ButtonWithText* btn4 = new ButtonWithText(photo, "太空大战");
+    ButtonWithText* btn4 = new ButtonWithText(photo, tr("太空大战"));
     btn4->setButtonSize(250.0 / 2560.0 * w_primary, 270.0 / 1440.0 * h_primary);
 
     photo=":/res/image/water.png";
-    ButtonWithText* btn5 = new ButtonWithText(photo, "激流勇进");
+    ButtonWithText* btn5 = new ButtonWithText(photo, tr("激流勇进"));
     btn5->setButtonSize(250.0 / 2560.0 * w_primary, 270.0 / 1440.0 * h_primary);
 
     // 连接点击信号
@@ -179,25 +171,15 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "鼠的故事被点击！";
     });
 
-    /*QObject::connect(btn3, &QPushButton::clicked, []() {
-        qDebug() << "拯救苹果被点击！";
-    });*/
-
     QObject::connect(btn3, &QPushButton::clicked, [this]() {
         qDebug() << "拯救苹果被点击！";
         AppleGameWidget* gameWidget = new AppleGameWidget();
-        gameWidget->showFullScreen();
-        // 可选：隐藏主窗口
-        // this->hide();
+        gameWidget->showFullScreen(); 
         // 当游戏窗口关闭时，重新显示主窗口
         QObject::connect(gameWidget, &QWidget::destroyed, this, [this]() {
             this->show();
             });
         });
-
-    /*QObject::connect(btn4, &QPushButton::clicked, []() {
-        qDebug() << "太空大战被点击！";
-    });*/
 
     QObject::connect(btn4, &QPushButton::clicked, [this]() {
         qDebug() << "太空大战被点击！";

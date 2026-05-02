@@ -37,7 +37,7 @@ void SpaceSettingsDialog::setupUi()
 
     // 敌机最大同屏数量 1-10
     QHBoxLayout *enemyLayout = new QHBoxLayout;
-    QLabel *enemyLabel = new QLabel("敌机最大同屏数量 :", this);
+    QLabel *enemyLabel = new QLabel(tr("敌机最大同屏数量 :"), this);
     m_enemyMaxSlider = new QSlider(Qt::Horizontal, this);
     m_enemyMaxSlider->setRange(1, 10);
     m_enemyMaxLabel = new QLabel("3", this);
@@ -51,7 +51,7 @@ void SpaceSettingsDialog::setupUi()
 
     // 速度 1-10
     QHBoxLayout *speedLayout = new QHBoxLayout;
-    QLabel *speedLabel = new QLabel("速度 :", this);
+    QLabel *speedLabel = new QLabel(tr("速度 :"), this);
     m_speedSlider = new QSlider(Qt::Horizontal, this);
     m_speedSlider->setRange(1, 10);
     m_speedLabel = new QLabel("3", this);
@@ -65,7 +65,7 @@ void SpaceSettingsDialog::setupUi()
 
     // 难度升级间隔时间（秒） 30-600
     QHBoxLayout *intervalLayout = new QHBoxLayout;
-    QLabel *intervalLabel = new QLabel("难度升级间隔(秒) :", this);
+    QLabel *intervalLabel = new QLabel(tr("难度升级间隔(秒) :"), this);
     m_upgradeIntervalSlider = new QSlider(Qt::Horizontal, this);
     m_upgradeIntervalSlider->setRange(30, 600);
     m_upgradeIntervalLabel = new QLabel("120", this);
@@ -79,7 +79,7 @@ void SpaceSettingsDialog::setupUi()
 
     // 奖励模式
     QHBoxLayout *rewardLayout = new QHBoxLayout;
-    QLabel *rewardLabel = new QLabel("奖励模式 :", this);
+    QLabel *rewardLabel = new QLabel(tr("奖励模式 :"), this);
     m_rewardCheckBox = new QCheckBox(this);
     m_rewardCheckBox->setChecked(false);
     rewardLayout->addStretch(16);
@@ -169,7 +169,7 @@ void SpaceSettingsDialog::onOkClicked()
     ExitConfirmDialog dlg(this, ":/res/image/Common/Images/MAIN_DLG_BG.png",
                           ":/res/image/Common/Images/YES.png",
                           ":/res/image/Common/Images/NO.png",
-                          "设置改变是否立即生效？");
+                          tr("设置改变是否立即生效？"));
     dlg.exec();
     if (!dlg.isConfirmed()) return;
     emit settingsApplied(m_enemyMaxSlider->value(), m_speedSlider->value(),

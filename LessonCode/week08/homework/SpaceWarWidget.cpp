@@ -193,7 +193,7 @@ void SpaceWarWidget::paintEvent(QPaintEvent*)
             QFont f = font();
             f.setPointSize(48);
             p.setFont(f);
-            p.drawText(rect(), Qt::AlignCenter, "GAME OVER\n按ESC退出");
+            p.drawText(rect(), Qt::AlignCenter, tr("GAME OVER\n按ESC退出"));
         }
     }
 }
@@ -269,7 +269,7 @@ void SpaceWarWidget::drawHUD(QPainter& p) {
         p.setPen(Qt::blue);
         QFont smallF("Arial", iconS * 0.38, QFont::Bold);
         p.setFont(smallF);
-        p.drawText(timeIconX + iconS*2 + 5, topY + iconS *1.4, "游戏已升级！");
+        p.drawText(timeIconX + iconS*2 + 5, topY + iconS *1.4, tr("游戏已升级！"));
     }
 }
 
@@ -599,11 +599,11 @@ void SpaceWarWidget::updateBullets() {
         while (diff < -PI) diff += 2 * PI;
 
         // 限制转向速率
-        double turnRate = 0.2;
+        constexpr double turnRate = 0.2;
         bullet.currentAngle += qBound(-turnRate, diff, turnRate);  // ← 更新存储的角度
 
         // 移动
-        const double bulletSpeed = 40.0;
+        constexpr double bulletSpeed = 40.0;
         bullet.pos.rx() += bulletSpeed * cos(bullet.currentAngle);
         bullet.pos.ry() += bulletSpeed * sin(bullet.currentAngle);
 
@@ -943,7 +943,7 @@ void SpaceWarWidget::onExitClicked() {
         ":/res/image/Common/Images/MAIN_DLG_BG.png",
         ":/res/image/Common/Images/MAIN_DLG_EXIT.png",
         ":/res/image/Common/Images/MAIN_DLG_REPLAY.png",
-        "你真的要退出吗？");
+        tr("你真的要退出吗？"));
     dlg.exec();
     if (dlg.isConfirmed()) {
         close();
