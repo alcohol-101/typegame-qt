@@ -10,6 +10,11 @@
 #include <QPixmap>
 #include <QElapsedTimer> 
 #include <QMediaPlayer>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 class TriStateButton;
 class SpaceSettingsDialog;
@@ -188,6 +193,15 @@ private:
 
     void pauseGame();
     void resumeGame();
+
+    // ---- LLM 单词生成 ----
+    void prefillLLMPool();
+    void requestLLMWord();
+    void onLLMWordReceived(QNetworkReply* reply);
+
+    QNetworkAccessManager* m_networkManager = nullptr;
+    QStringList m_llmWordPool;
+    int m_llmPendingRequests = 0;
 };
 
 #endif // SPACEWARWIDGET_H

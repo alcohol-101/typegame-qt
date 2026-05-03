@@ -1,9 +1,4 @@
 #include "spacewarwidget.h"
-#include "tristatebutton.h"
-#include "spacesettingsdialog.h"
-#include "highscoredialog.h"
-#include "nameinputdialog.h"
-#include "exitconfirmdialog.h"
 
 #include <QPainter>
 #include <QKeyEvent>
@@ -19,9 +14,13 @@
 #include <QElapsedTimer> 
 #include <QDebug>
 
+#include "tristatebutton.h"
+#include "spacesettingsdialog.h"
+#include "highscoredialog.h"
+#include "nameinputdialog.h"
+#include "exitconfirmdialog.h"
 
 constexpr double PI = 3.14159265358979323846;
-
 
 constexpr double bulletSpeed = 40.0;
 constexpr double turnRate = 0.2;
@@ -36,7 +35,13 @@ constexpr int MAX_REWARD_WORDS = 1;
 constexpr double DEFAULT_REWARD_WORD_SPEED = 15.0;
 constexpr int GAME_OVER_DELAY_MS = 500;
 
-
+// LLM API 配置（替换为你的 DeepSeek API Key）
+static const QString LLM_API_URL = "https://api.deepseek.com/chat/completions";
+static const QString LLM_API_KEY = "REVOKED-KEY-SET-DEEPSEEK_API_KEY-ENV-VAR";
+static const QString LLM_API_MODEL = "deepseek-chat";
+static const QString LLM_PROMPT = "生成一个与计算机领域相关的英文单词，只返回单词本身，不要有任何额外文字或标点符号。";
+static const int LLM_MAX_TOKENS = 20;
+static const int LLM_PREFILL_COUNT = 3;
 
 SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     : QWidget(parent)
@@ -150,6 +155,8 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
 
     // 初始位置将在 resizeEvent 中设置
     m_playerPos = QPointF(width() / 2.0, height() * 0.85);
+
+    m_networkManager = new QNetworkAccessManager(this);
 }
 
 SpaceWarWidget::~SpaceWarWidget()
@@ -158,7 +165,6 @@ SpaceWarWidget::~SpaceWarWidget()
         m_highScoreDialog->saveScores();
     }
 }
-
 
 void SpaceWarWidget::resizeEvent(QResizeEvent* event)
 {
@@ -384,6 +390,8 @@ void SpaceWarWidget::initGame() {
     m_explosions.clear();
     m_rewardWords.clear();
     m_usedLetters.clear();
+    m_llmWordPool.clear();
+    m_llmPendingRequests = 0;
     m_score = 0;
     m_lives = m_maxLives;
     m_playerPos = QPointF(width() / 2.0, height() * 0.85);
@@ -839,8 +847,15 @@ QString SpaceWarWidget::getLineWord(const QString& resourcePath) {
 }
 
 QString SpaceWarWidget::generateRewardWord() {
-    QString word = getLineWord(":/data/data/word.txt");
+    // 优先从 LLM 单词池取，消耗后立即异步补充
+    if (!m_llmWordPool.isEmpty()) {
+        QString word = m_llmWordPool.takeFirst();
+        requestLLMWord();
+		qDebug() << "从 LLM 单词池获取单词：" << word;
+        return word.toUpper();
+    }
 
+    QString word = getLineWord(":/data/data/word.txt");
     if (word.isEmpty()) {
         qDebug() << "使用备用单词列表";
         static QStringList backupWords = {
@@ -850,8 +865,66 @@ QString SpaceWarWidget::generateRewardWord() {
         int randomIndex = QRandomGenerator::global()->bounded(backupWords.size());
         word = backupWords[randomIndex];
     }
-
     return word.toUpper();
+}
+
+void SpaceWarWidget::prefillLLMPool() {
+    for (int i = 0; i < LLM_PREFILL_COUNT; ++i)
+        requestLLMWord();
+}
+
+void SpaceWarWidget::requestLLMWord() {
+    if (m_llmPendingRequests >= LLM_PREFILL_COUNT)
+        return;
+
+    QJsonObject msg;
+    msg["role"] = "user";
+    msg["content"] = LLM_PROMPT;
+    QJsonArray messages;
+    messages.append(msg);
+    QJsonObject body;
+    body["model"] = LLM_API_MODEL;
+    body["messages"] = messages;
+    body["max_tokens"] = LLM_MAX_TOKENS;
+
+    QUrl url(LLM_API_URL);
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setRawHeader("Authorization", ("Bearer " + LLM_API_KEY).toUtf8());
+
+    QByteArray postData = QJsonDocument(body).toJson();
+    QNetworkReply* reply = m_networkManager->post(request, postData);
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        onLLMWordReceived(reply);
+    });
+    m_llmPendingRequests++;
+}
+
+void SpaceWarWidget::onLLMWordReceived(QNetworkReply* reply) {
+    reply->deleteLater();
+    m_llmPendingRequests--;
+
+    if (reply->error() != QNetworkReply::NoError)
+        return;
+
+    QByteArray data = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    QJsonArray choices = doc.object()["choices"].toArray();
+    if (choices.isEmpty())
+        return;
+
+    QString word = choices[0].toObject()["message"].toObject()["content"].toString()
+                       .trimmed().toUpper();
+
+    // 校验：仅包含英文字母且长度合理
+    if (word.isEmpty() || word.length() < 2)
+        return;
+    for (const QChar& ch : word) {
+        if (!ch.isLetter() || ch.toLatin1() < 'A' || ch.toLatin1() > 'Z')
+            return;
+    }
+
+    m_llmWordPool.append(word);
 }
 
 
@@ -900,6 +973,7 @@ void SpaceWarWidget::resumeGame() {
 void SpaceWarWidget::onStartClicked() {
     if (m_gamePaused) return;
     initGame();
+    prefillLLMPool();
     m_showMainMenu = false;
     m_startBtn->hide(); m_highScoreBtn->hide(); m_optionsBtn->hide(); m_exitBtn->hide();
     m_returnBtn->hide();
