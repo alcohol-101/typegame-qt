@@ -12,14 +12,12 @@
 
 #include "exitconfirmdialog.h"
 
-// ========== 布局常量 ==========
 constexpr double BUTTON_WIDTH_RATIO = 0.17778;
 constexpr double BUTTON_HEIGHT_RATIO = 0.09333;
 constexpr double OK_BTN_X_RATIO = 0.38889;
 constexpr double CANCEL_BTN_X_RATIO = 0.58889;
 constexpr double DEFAULT_BTN_X_RATIO = 0.78889;
 constexpr double BTN_Y_RATIO = 0.85333;
-// ==============================
 
 
 SettingsDialog::SettingsDialog(QWidget* parent)
@@ -50,14 +48,12 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 
     setupUi();
 
-    // ========== 悬浮音效初始化 ==========
     m_hoverSoundEffect = new QSoundEffect(this);
     m_hoverSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/ANIBTN_ENTER.wav"));
-    m_hoverSoundEffect->setVolume(1.0f);  // 音量 0.0 ~ 1.0
+    m_hoverSoundEffect->setVolume(1.0f);
 
-    // 初始化点击音效
     m_clickSoundEffect = new QSoundEffect(this);
-    m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));  // 你的点击音效文件路径
+    m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));
     m_clickSoundEffect->setVolume(1.0f);
 
     okBtn->installEventFilter(this);
@@ -352,14 +348,12 @@ bool SettingsDialog::eventFilter(QObject* obj, QEvent* event)
         return QWidget::eventFilter(obj, event);
     }
 
-    // 处理鼠标进入事件（悬浮音效）
     if (event->type() == QEvent::Enter) {
         if (m_hoverSoundEffect && m_hoverSoundEffect->isLoaded()) {
             m_hoverSoundEffect->play();
         }
     }
 
-    // 处理鼠标按下事件（点击音效）
     if (event->type() == QEvent::MouseButtonPress) {
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         if (mouseEvent->button() == Qt::LeftButton) {
@@ -369,6 +363,5 @@ bool SettingsDialog::eventFilter(QObject* obj, QEvent* event)
         }
     }
 
-    // 继续传递事件给默认处理器
     return QWidget::eventFilter(obj, event);
 }

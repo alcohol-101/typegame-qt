@@ -1,4 +1,3 @@
-// SpaceSettingsDialog.h
 #ifndef SPACESETTINGSDIALOG_H
 #define SPACESETTINGSDIALOG_H
 

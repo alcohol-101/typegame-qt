@@ -1,4 +1,3 @@
-// SpaceSettingsDialog.cpp
 #include "spacesettingsdialog.h"
 #include "exitconfirmdialog.h"
 #include <QVBoxLayout>
@@ -7,14 +6,12 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 
-// ========== 布局常量 ==========
 constexpr double BUTTON_WIDTH_RATIO = 0.17778;
 constexpr double BUTTON_HEIGHT_RATIO = 0.09333;
 constexpr double OK_BTN_X_RATIO = 0.38889;
 constexpr double CANCEL_BTN_X_RATIO = 0.58889;
 constexpr double DEFAULT_BTN_X_RATIO = 0.78889;
 constexpr double BTN_Y_RATIO = 0.85333;
-// ==============================
 
 
 SpaceSettingsDialog::SpaceSettingsDialog(QWidget *parent)
@@ -45,7 +42,6 @@ void SpaceSettingsDialog::setupUi()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    // 敌机最大同屏数量 1-10
     QHBoxLayout *enemyLayout = new QHBoxLayout;
     QLabel *enemyLabel = new QLabel(tr("敌机最大同屏数量 :"), this);
     m_enemyMaxSlider = new QSlider(Qt::Horizontal, this);
@@ -59,7 +55,6 @@ void SpaceSettingsDialog::setupUi()
     enemyLayout->addStretch(2);
     connect(m_enemyMaxSlider, &QSlider::valueChanged, this, &SpaceSettingsDialog::onEnemyMaxChanged);
 
-    // 速度 1-10
     QHBoxLayout *speedLayout = new QHBoxLayout;
     QLabel *speedLabel = new QLabel(tr("速度 :"), this);
     m_speedSlider = new QSlider(Qt::Horizontal, this);
@@ -73,7 +68,6 @@ void SpaceSettingsDialog::setupUi()
     speedLayout->addStretch(2);
     connect(m_speedSlider, &QSlider::valueChanged, this, &SpaceSettingsDialog::onSpeedChanged);
 
-    // 难度升级间隔时间（秒） 30-600
     QHBoxLayout *intervalLayout = new QHBoxLayout;
     QLabel *intervalLabel = new QLabel(tr("难度升级间隔(秒) :"), this);
     m_upgradeIntervalSlider = new QSlider(Qt::Horizontal, this);
@@ -87,7 +81,6 @@ void SpaceSettingsDialog::setupUi()
     intervalLayout->addStretch(2);
     connect(m_upgradeIntervalSlider, &QSlider::valueChanged, this, &SpaceSettingsDialog::onUpgradeIntervalChanged);
 
-    // 奖励模式
     QHBoxLayout *rewardLayout = new QHBoxLayout;
     QLabel *rewardLabel = new QLabel(tr("奖励模式 :"), this);
     m_rewardCheckBox = new QCheckBox(this);
@@ -99,7 +92,6 @@ void SpaceSettingsDialog::setupUi()
     rewardLayout->addStretch(2);
     connect(m_rewardCheckBox, &QCheckBox::toggled, this, &SpaceSettingsDialog::onRewardToggled);
 
-    // 按钮
     qreal w = width() * BUTTON_WIDTH_RATIO;
     qreal h = height() * BUTTON_HEIGHT_RATIO;
     okBtn = new QPushButton(this);
@@ -125,11 +117,10 @@ void SpaceSettingsDialog::setupUi()
     connect(cancelBtn, &QPushButton::clicked, this, &SpaceSettingsDialog::onCancelClicked);
     connect(defaultBtn, &QPushButton::clicked, this, &SpaceSettingsDialog::onDefaultClicked);
 
-    // 默认值
     m_enemyMaxSlider->setValue(3);
     m_speedSlider->setValue(3);
     m_upgradeIntervalSlider->setValue(120);
-    m_rewardCheckBox->setChecked(true);  // 默认开启奖励模式
+    m_rewardCheckBox->setChecked(true);
     m_valuesChanged = false;
 }
 

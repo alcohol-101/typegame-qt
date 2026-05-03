@@ -1,4 +1,3 @@
-// HighScoreDialog.cpp
 #include "highscoredialog.h"
 #include "tristatebutton.h"
 #include <QFile>
@@ -8,14 +7,12 @@
 #include <QScreen>
 #include <QDebug>
 
-// ========== 常量 ==========
 constexpr int MAX_DISPLAY_SCORES = 9;
 constexpr double SCORE_X_RATIO = 250.0 / 800.0;
 constexpr double SCORE_Y_BASE_RATIO = 154.0 / 600.0;
 constexpr double SCORE_Y_STEP_RATIO = 36.0 / 600.0;
 constexpr double SCORE_ITEM_WIDTH_RATIO = 345.0 / 800.0;
 constexpr double SCORE_ITEM_HEIGHT_RATIO = 33.0 / 600.0;
-// =========================
 
 
 HighScoreDialog::HighScoreDialog(const QString& scoreFilePath, QWidget* parent)
@@ -28,7 +25,6 @@ HighScoreDialog::HighScoreDialog(const QString& scoreFilePath, QWidget* parent)
     QScreen* screen = QApplication::primaryScreen();
     setFixedSize(screen->size());
 
-    // 右下角返回按钮（手动定位）
     m_returnBtn = new TriStateButton(":/res/image/Space/Images/SPACE_RETURN.png", this);
     m_returnBtn->setFixedSize(height() * 0.36, height() * 0.06);
     m_returnBtn->move(width() - m_returnBtn->width() - 50, height() - m_returnBtn->height() - 30);
@@ -67,14 +63,13 @@ void HighScoreDialog::loadScores()
         
     }
 
-    // 排序降序
     std::sort(m_entries.begin(), m_entries.end(), [](const auto& a, const auto& b) {
         return a.second > b.second;
         });
     if (m_entries.size() > MAX_DISPLAY_SCORES)
         m_entries = m_entries.mid(0, MAX_DISPLAY_SCORES);
 
-    update(); // 触发重绘
+    update();
 }
 
 void HighScoreDialog::saveScores()
@@ -98,7 +93,7 @@ void HighScoreDialog::addScore(const QString& name, int score)
     if (m_entries.size() > MAX_DISPLAY_SCORES)
         m_entries = m_entries.mid(0, MAX_DISPLAY_SCORES);
     saveScores();
-    update(); // 触发重绘
+    update();
 }
 
 void HighScoreDialog::onReturnClicked()
@@ -112,23 +107,19 @@ void HighScoreDialog::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    // 绘制背景
     if (!m_background.isNull())
         painter.drawPixmap(rect(), m_background);
     else
         painter.fillRect(rect(), QColor(20, 20, 80, 200));
 
-    // 设置文字样式
     QFont font("Arial",32,  QFont::Bold);
    
     painter.setFont(font);
-    painter.setPen(QColor(0, 255, 0)); // 绿色
+    painter.setPen(QColor(0, 255, 0));
 
-    // 计算绘制区域
     int w = width();
     int h = height();
 
-    // 绘制分数列表
     painter.setFont(font);
 
     for (int i = 0; i < MAX_DISPLAY_SCORES; ++i) {
@@ -138,8 +129,7 @@ void HighScoreDialog::paintEvent(QPaintEvent* event)
         int itemHeight = h * SCORE_ITEM_HEIGHT_RATIO;
 
         if (i < m_entries.size()) {
-            // 排名和名字（左对齐）
-            painter.setPen(QColor(0, 255, 0)); // 绿色
+            painter.setPen(QColor(0, 255, 0));
             QString nameText = QString("%1").arg(m_entries[i].first);
             QString scoreText = QString::number(m_entries[i].second);
             QString text = QString(nameText + ":" + scoreText);
@@ -149,8 +139,7 @@ void HighScoreDialog::paintEvent(QPaintEvent* event)
            
         }
         else {
-            // 空排名
-            painter.setPen(QColor(100, 100, 100)); // 灰色表示空位
+            painter.setPen(QColor(100, 100, 100));
             painter.drawText(x, y, itemWidth, itemHeight,
                 Qt::AlignLeft | Qt::AlignVCenter,
                 QString("---"));
@@ -162,7 +151,6 @@ void HighScoreDialog::resizeEvent(QResizeEvent* event)
 {
     QDialog::resizeEvent(event);
 
-    // 更新返回按钮位置
     if (m_returnBtn) {
         m_returnBtn->move(width() - m_returnBtn->width() - 50,
             height() - m_returnBtn->height() - 30);

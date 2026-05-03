@@ -5,48 +5,39 @@
 #include <QScreen>
 #include <QMouseEvent>
 
-// ========== 常量 ==========
 constexpr double TRIPLE_STATE_BTN_DIVISOR = 3.0;
 constexpr int BORDER_IMAGE_MULTIPLIER = 2;
-// ==========================
 
 
 ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString left_url, QString right_url, QString text)
     : QDialog(parent)
     , m_confirmed(false)
 {
-    // ===== 窗口设置 =====
     setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
-    setAttribute(Qt::WA_TranslucentBackground);  // 允许透明背景
+    setAttribute(Qt::WA_TranslucentBackground);
 
-    // 加载背景图
     m_backgroundPixmap.load(back_url);
 
-    // 设置窗口大小为背景图尺寸（你也可以手动指定）
     if (!m_backgroundPixmap.isNull()) {
         setFixedSize(m_backgroundPixmap.width() * 2, m_backgroundPixmap.height() * 2);
     }
     else {
-        setFixedSize(400, 250);  // 备用尺寸
+        setFixedSize(400, 250);
     }
 
-    // 居中显示
     QScreen* screen = QApplication::primaryScreen();
     QPoint center = screen->geometry().center();
     move(center.x() - width() / 2, center.y() - height() / 2);
 
-    // ===== 创建布局 =====
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(30, 40, 30, 30);  // 左、上、右、下边距
+    mainLayout->setContentsMargins(30, 40, 30, 30);
     mainLayout->setSpacing(20);
 
-    // 顶部弹簧（把内容往下推）
     mainLayout->addStretch();
 
-    // 提示文字
     QLabel* textLabel = new QLabel(text, this);
     textLabel->setAlignment(Qt::AlignCenter);
-    textLabel->setWordWrap(true);  // 支持换行
+    textLabel->setWordWrap(true);
     textLabel->setStyleSheet(R"(
         QLabel {
             background: transparent;
@@ -59,7 +50,6 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
 
     mainLayout->addStretch();
 
-    // ===== 按钮区域 =====
     QHBoxLayout* btnLayout = new QHBoxLayout();
     btnLayout->setSpacing(30);
     btnLayout->addStretch();
@@ -70,7 +60,6 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     qreal left_width = left_map->width() / TRIPLE_STATE_BTN_DIVISOR;
     qreal right_width = right_map->width() / TRIPLE_STATE_BTN_DIVISOR;
 
-    // 退出按钮
     QPushButton* confirmBtn = new QPushButton(this);
     confirmBtn->setFixedSize(92, 46);
     QString confirmStyle = QString(R"(
@@ -86,7 +75,6 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     btnLayout->addWidget(confirmBtn);
     btnLayout->addStretch();
 
-    // 继续按钮
     QPushButton* continueBtn = new QPushButton(this);
     continueBtn->setFixedSize(92, 46);
     confirmStyle = QString(R"(
@@ -106,28 +94,24 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     mainLayout->addLayout(btnLayout);
 
 
-    // ===== 连接信号 =====
     connect(confirmBtn, &QPushButton::clicked, [this]() {
         m_confirmed = true;
-        accept();  // 关闭对话框，返回 QDialog::Accepted
+        accept();
         });
 
     connect(continueBtn, &QPushButton::clicked, [this]() {
         m_confirmed = false;
-        reject();  // 关闭对话框，返回 QDialog::Rejected
+        reject();
         });
 
-    // ========== 悬浮音效初始化 ==========
     m_hoverSoundEffect = new QSoundEffect(this);
     m_hoverSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/ANIBTN_ENTER.wav"));
-    m_hoverSoundEffect->setVolume(1.0f);  // 音量 0.0 ~ 1.0
+    m_hoverSoundEffect->setVolume(1.0f);
 
-    // 初始化点击音效
     m_clickSoundEffect = new QSoundEffect(this);
-    m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));  // 你的点击音效文件路径
+    m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));
     m_clickSoundEffect->setVolume(1.0f);
 
-    // ===== 为按钮安装事件过滤器 =====
     confirmBtn->installEventFilter(this);
     continueBtn->installEventFilter(this);
 
@@ -138,38 +122,31 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     : QDialog(parent)
     , m_confirmed(false)
 {
-    // ===== 窗口设置 =====
     setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
-    setAttribute(Qt::WA_TranslucentBackground);  // 允许透明背景
+    setAttribute(Qt::WA_TranslucentBackground);
 
-    // 加载背景图
     m_backgroundPixmap.load(back_url);
 
-    // 设置窗口大小为背景图尺寸（你也可以手动指定）
     if (!m_backgroundPixmap.isNull()) {
         setFixedSize(m_backgroundPixmap.width() * 2, m_backgroundPixmap.height() * 2);
     }
     else {
-        setFixedSize(400, 250);  // 备用尺寸
+        setFixedSize(400, 250);
     }
 
-    // 居中显示
     QScreen* screen = QApplication::primaryScreen();
     QPoint center = screen->geometry().center();
     move(center.x() - width() / 2, center.y() - height() / 2);
 
-    // ===== 创建布局 =====
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(30, 40, 30, 30);  // 左、上、右、下边距
+    mainLayout->setContentsMargins(30, 40, 30, 30);
     mainLayout->setSpacing(20);
 
-    // 顶部弹簧（把内容往下推）
     mainLayout->addStretch();
 
-    // 提示文字
     QLabel* textLabel = new QLabel(text, this);
     textLabel->setAlignment(Qt::AlignCenter);
-    textLabel->setWordWrap(true);  // 支持换行
+    textLabel->setWordWrap(true);
     textLabel->setStyleSheet(R"(
         QLabel {
             background: transparent;
@@ -182,7 +159,6 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
 
     mainLayout->addStretch();
 
-    // ===== 按钮区域 =====
     QHBoxLayout* btnLayout = new QHBoxLayout();
     btnLayout->setSpacing(20);
     btnLayout->addStretch();
@@ -195,7 +171,6 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     qreal min_width = min_map->width() / 3;
     qreal right_width = right_map->width() / TRIPLE_STATE_BTN_DIVISOR;
 
-    // 左按钮
     QPushButton* confirmBtn = new QPushButton(this);
     confirmBtn->setFixedSize(92, 46);
     QString confirmStyle = QString(R"(
@@ -211,7 +186,6 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     btnLayout->addWidget(confirmBtn);
     btnLayout->addStretch();
 
-    //中间按钮
     QPushButton* minBtn = new QPushButton(this);
     minBtn->setFixedSize(92, 46);
     confirmStyle = QString(R"(
@@ -227,7 +201,6 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     btnLayout->addWidget(minBtn);
     btnLayout->addStretch();
 
-    // 右按钮
     QPushButton* continueBtn = new QPushButton(this);
     continueBtn->setFixedSize(92, 46);
     confirmStyle = QString(R"(
@@ -246,35 +219,31 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     mainLayout->addLayout(btnLayout);
 
 
-    // ===== 连接信号 =====
     connect(confirmBtn, &QPushButton::clicked, [this]() {
         m_confirmed = true;
         m_confirmed_3 = 0;
-        accept();  // 关闭对话框，返回 QDialog::Accepted
+        accept();
         });
 
     connect(minBtn, &QPushButton::clicked, [this]() {
         m_confirmed_3 = 1;
-        accept();  // 关闭对话框，返回 QDialog::Accepted
+        accept();
         });
 
     connect(continueBtn, &QPushButton::clicked, [this]() {
         m_confirmed = false;
         m_confirmed_3 = 2;
-        reject();  // 关闭对话框，返回 QDialog::Rejected
+        reject();
         });
 
-    // ========== 悬浮音效初始化 ==========
     m_hoverSoundEffect = new QSoundEffect(this);
     m_hoverSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/ANIBTN_ENTER.wav"));
-    m_hoverSoundEffect->setVolume(1.0f);  // 音量 0.0 ~ 1.0
+    m_hoverSoundEffect->setVolume(1.0f);
 
-    // 初始化点击音效
     m_clickSoundEffect = new QSoundEffect(this);
-    m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));  // 你的点击音效文件路径
+    m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));
     m_clickSoundEffect->setVolume(1.0f);
 
-    // ===== 为按钮安装事件过滤器 =====
     confirmBtn->installEventFilter(this);
     minBtn->installEventFilter(this);
     continueBtn->installEventFilter(this);
@@ -293,7 +262,6 @@ void ExitConfirmDialog::paintEvent(QPaintEvent* event)
         painter.drawPixmap(rect(), m_backgroundPixmap);
     }
     else {
-        // 备用：绘制半透明黑色背景
         painter.fillRect(rect(), QColor(0, 0, 0, 180));
     }
 }
@@ -305,14 +273,12 @@ bool ExitConfirmDialog::eventFilter(QObject* obj, QEvent* event)
         return QWidget::eventFilter(obj, event);
     }
 
-    // 处理鼠标进入事件（悬浮音效）
     if (event->type() == QEvent::Enter) {
         if (m_hoverSoundEffect && m_hoverSoundEffect->isLoaded()) {
             m_hoverSoundEffect->play();
         }
     }
 
-    // 处理鼠标按下事件（点击音效）
     if (event->type() == QEvent::MouseButtonPress) {
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         if (mouseEvent->button() == Qt::LeftButton) {
@@ -322,6 +288,5 @@ bool ExitConfirmDialog::eventFilter(QObject* obj, QEvent* event)
         }
     }
 
-    // 继续传递事件给默认处理器
     return QWidget::eventFilter(obj, event);
 }

@@ -1,4 +1,3 @@
-// HighScoreDialog.h
 #ifndef HIGHSCOREDIALOG_H
 #define HIGHSCOREDIALOG_H
 

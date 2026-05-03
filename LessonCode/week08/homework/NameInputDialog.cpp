@@ -1,4 +1,3 @@
-// NameInputDialog.cpp
 #include "nameinputdialog.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>

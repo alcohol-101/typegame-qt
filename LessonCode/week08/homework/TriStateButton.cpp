@@ -1,4 +1,3 @@
-// TriStateButton.cpp
 #include "tristatebutton.h"
 #include <QPainter>
 #include <QPaintEvent>
@@ -8,7 +7,6 @@ TriStateButton::TriStateButton(const QString& imagePath, QWidget* parent)
     : QPushButton(parent)
     , m_state(Normal)
 {
-    // 加载完整三帧图片
     QPixmap fullPixmap(imagePath);
 
     if (!fullPixmap.isNull()) {
@@ -16,10 +14,9 @@ TriStateButton::TriStateButton(const QString& imagePath, QWidget* parent)
         int frameWidth = fullPixmap.width() / 3;
         int frameHeight = fullPixmap.height();
 
-        // 拆分成三帧独立存储
-        m_frames[0] = fullPixmap.copy(0, 0, frameWidth, frameHeight);           // 第1帧：默认
-        m_frames[1] = fullPixmap.copy(frameWidth, 0, frameWidth, frameHeight);  // 第2帧：Hover
-        m_frames[2] = fullPixmap.copy(frameWidth * 2, 0, frameWidth, frameHeight); // 第3帧：按下
+        m_frames[0] = fullPixmap.copy(0, 0, frameWidth, frameHeight);
+        m_frames[1] = fullPixmap.copy(frameWidth, 0, frameWidth, frameHeight);
+        m_frames[2] = fullPixmap.copy(frameWidth * 2, 0, frameWidth, frameHeight);
     }
 
     m_hoverSound = new QSoundEffect(this);
@@ -32,7 +29,6 @@ TriStateButton::TriStateButton(const QString& imagePath, QWidget* parent)
 
 void TriStateButton::setFixedSize(int w, int h)
 {
-    // 设置按钮实际大小
     QPushButton::setFixedSize(w, h);
 }
 
@@ -46,7 +42,6 @@ void TriStateButton::paintEvent(QPaintEvent* event)
     if (currentFrame.isNull()) return;
 
     QPainter painter(this);
-    // 将对应帧的图片缩放到当前按钮的全部区域
     painter.drawPixmap(rect(), currentFrame);
 }
 
@@ -55,13 +50,12 @@ void TriStateButton::enterEvent(QEvent* event)
     if (m_state != Pressed) {
         m_state = Hover;
 
-        // 播放悬浮音效（仅当鼠标首次进入或从Normal状态进入时播放）
         if (m_hoverSound && m_hoverSound->isLoaded()) {
             m_hoverSound->play();
             
         }
 
-        update();  // 触发重绘，切换到第2帧
+        update();
     }
     QPushButton::enterEvent(event);
 }
@@ -71,7 +65,7 @@ void TriStateButton::leaveEvent(QEvent* event)
     if (m_state != Pressed) {
         m_state = Normal;
        
-        update();  // 触发重绘，切换到第1帧
+        update();
     }
     QPushButton::leaveEvent(event);
 }
@@ -81,12 +75,11 @@ void TriStateButton::mousePressEvent(QMouseEvent* event)
     if (event->button() == Qt::LeftButton) {
         m_state = Pressed;
 
-        // 播放按下音效
         if ( m_pressedSound && m_pressedSound->isLoaded()) {
             m_pressedSound->play();
         }
 
-        update();  // 触发重绘，切换到第3帧
+        update();
     }
     QPushButton::mousePressEvent(event);
 }
@@ -94,7 +87,6 @@ void TriStateButton::mousePressEvent(QMouseEvent* event)
 void TriStateButton::mouseReleaseEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton) {
-        // 松手后恢复Hover状态（如果鼠标仍在按钮上）
         if (rect().contains(event->pos())) {
             m_state = Hover;
         }

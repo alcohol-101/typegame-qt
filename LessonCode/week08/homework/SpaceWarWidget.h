@@ -15,7 +15,6 @@ class TriStateButton;
 class SpaceSettingsDialog;
 class HighScoreDialog;
 
-// 对象类型
 enum ObjectType { Enemy, Meteorite };
 
 struct Explosion {
@@ -32,11 +31,11 @@ struct GameObject {
     int frameCount = 1;
 
     // 敌机专用
-    double initialX = 0.0;              // 初始生成 X 坐标
-    double targetX = 0.0;               // 第一阶段结束时的 X 坐标
+    double initialX = 0.0;
+    double targetX = 0.0;
     bool phaseOneDone = false;          // 第一阶段是否完成
     double oscillationCenterX = 0.0;    // 第二阶段水平振荡中心
-    double oscillationTime = 0.0;       // 累计振荡时间
+    double oscillationTime = 0.0;
     double oscAmplitude = 32.0;  // 振幅
     double oscOmega = 3.0;       // 角频率
 
@@ -90,18 +89,15 @@ private slots:
     void onWordSpawnTimer();        // 生成奖励单词
 
 private:
-    // ---- UI 控件 ----
     TriStateButton* m_startBtn, * m_highScoreBtn, * m_optionsBtn, * m_exitBtn;
     TriStateButton* m_returnBtn;    // 暂停时替换开始按钮
 
-    // ---- 游戏参数 ----
     int m_enemyMaxCount = 3;
     int m_meteoriteMaxCount = 1;    // = 敌机/2
     int m_speedLevel = 3;
-    int m_upgradeIntervalMs = 120000; // 毫秒
+    int m_upgradeIntervalMs = 120000;
     bool m_rewardEnabled = true;
 
-    // ---- 游戏状态 ----
     bool m_gameActive = false;
     bool m_gamePaused = false;
     bool m_showMainMenu = true;
@@ -112,34 +108,29 @@ private:
     bool m_upgradedFlag = false;
     bool m_waitingForNameInput = false;
 
-    // ---- 玩家 ----
     QPointF m_playerPos;
     double m_playerSpeed = 6.0;
     int m_playerFrame = 0;
     bool m_playerRightDir = true;
     QTimer* m_playerAnimTimer = nullptr;
 
-    // ---- 游戏对象 ----
     QList<GameObject> m_objects;
     QList<Bullet> m_bullets;
     QList<Explosion> m_explosions;
     QList<RewardWord> m_rewardWords;
 
-    // ---- 字母管理 ----
     QSet<QChar> m_usedLetters;
 
-    // ---- 定时器 ----
     QTimer* m_gameTimer = nullptr;           // 主循环 33fps
-    QTimer* m_upgradeTimer = nullptr;        // 难度升级倒计时 (1s)
+    QTimer* m_upgradeTimer = nullptr;
     QTimer* m_explosionCheckTimer = nullptr; // 爆炸帧更新 (0.1s)
-    QTimer* m_wordSpawnTimer = nullptr;      // 奖励单词生成 (10s)
+    QTimer* m_wordSpawnTimer = nullptr;
 
     QElapsedTimer m_upgradeShowTimer;
 
-    // ---- 资源图片 ----
     QPixmap m_playerPixmap;       // 3x4 11帧
     QPixmap m_meteoritePixmap;    // 3x4 12帧
-    QPixmap m_enemyPixmap;        // 敌机
+    QPixmap m_enemyPixmap;
     QPixmap m_enemyUp;
     QPixmap m_explosionPixmap;    // 3x3 9帧
     QPixmap m_bulletPixmap;
@@ -148,25 +139,21 @@ private:
     QPixmap m_lifeIcon;
     QPixmap m_scoreIcon;
     QPixmap m_timeIcon;
-    QPixmap m_mainMenuBackground;   // 主菜单背景
-    QPixmap m_gameBackground;       // 游戏进行中背景
+    QPixmap m_mainMenuBackground;
+    QPixmap m_gameBackground;
 
-    //背景音乐
     QMediaPlayer* m_bgmPlayer=nullptr;
     bool m_soundEnabled = true;
 
-    // ---- 音效 ----
     QSoundEffect* m_shootSound = nullptr;
     QSoundEffect* m_explosionSound = nullptr;
     QSoundEffect* m_generateSound = nullptr;
     QSoundEffect* m_bonusSound = nullptr;
 
-    // ---- 设置 & 高分 ----
     SpaceSettingsDialog* m_settingsDialog = nullptr;
     HighScoreDialog* m_highScoreDialog = nullptr;
     QString m_scoreFilePath;
 
-    // ---- 私有函数 ----
     void initGame();
     void stopGame();
     void updatePlayer();
@@ -182,13 +169,11 @@ private:
     void explodeObject(GameObject* obj);    // 参数改为指针
     void spawnRewardWord();
 
-    // 字母池操作
     QString getLineWord(const QString& resourcePath);
     QString generateRewardWord();
     QChar getUnusedLetter();
     void releaseLetter(QChar ch);
 
-    // 绘制辅助
     void drawBackground(QPainter& p);
     void drawMainMenu(QPainter& p);
     void drawHUD(QPainter& p);
@@ -198,11 +183,9 @@ private:
     void drawExplosions(QPainter& p);
     void drawRewardWords(QPainter& p);
 
-    // 碰撞矩形
     QRect getPlayerRect() const;            // 不再是 virtual/override
     QRect getObjectRect(const GameObject& obj) const;
 
-    // 暂停
     void pauseGame();
     void resumeGame();
 };

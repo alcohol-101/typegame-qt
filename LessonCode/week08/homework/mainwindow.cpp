@@ -26,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->resize(w_primary * 147.0 / 256.0, h_primary * 1045.0 / 1440.0);
 
     setWindowFlags(Qt::FramelessWindowHint);
-    // 2. 创建一个中心容器（QWidget）
     QWidget *centralContainer = new QWidget(this);
     QVBoxLayout *mainLayout = new QVBoxLayout(centralContainer);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -34,29 +33,25 @@ MainWindow::MainWindow(QWidget *parent)
 
     centralContainer->setStyleSheet(R"(border-radius: 5px;)");
 
-    // 3. 创建标题栏
     titleBar = new QWidget();
     titleBar->setObjectName("titleBar");
     titleBar->setStyleSheet("QWidget#titleBar { background-color: #58a2ff; }");
-    titleBar->setFixedHeight(this->height()*0.14832); // 设置标题栏高度
+    titleBar->setFixedHeight(this->height()*0.14832);
 
     QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);
     titleLayout->setContentsMargins(0, 0, 0, 0);
     titleLayout->setSpacing(10);
 
-    // 左侧自定义图标
     QLabel *iconLabel = new QLabel(titleBar);
-    QPixmap pixmap(":/res/image/title_left.png");  // 替换成你的图标路径
+    QPixmap pixmap(":/res/image/title_left.png");
     if (!pixmap.isNull()) {
         iconLabel->setPixmap(pixmap);
     } else {
-        // 如果图标加载失败，显示一个默认文字
         iconLabel->setText(tr("加载失败"));
         iconLabel->setStyleSheet("font-size: 18px;");
     }
     titleLayout->addWidget(iconLabel);
 
-    // 标题文字
     QLabel *titleLabel = new QLabel( titleBar);
     QFont titleFont = titleLabel->font();
     titleFont.setPointSize(50);
@@ -64,11 +59,9 @@ MainWindow::MainWindow(QWidget *parent)
     titleLabel->setStyleSheet("color: white;");
     titleLayout->addWidget(titleLabel);
 
-    // 右侧弹簧
     titleLayout->addStretch();
 
 
-    // 最小化按钮
     QPushButton *minimizeBtn = new QPushButton(QChar(0x2014), titleBar);
     minimizeBtn->setFixedSize(40, 30);
     minimizeBtn->setStyleSheet(
@@ -76,7 +69,6 @@ MainWindow::MainWindow(QWidget *parent)
         "QPushButton:hover { background-color: #d9e7ff; }"
         );
 
-    // 最大化按钮
     QPushButton *maximizeBtn = new QPushButton(QChar(0x25A1),titleBar);
     maximizeBtn->setFixedSize(40,30);
     maximizeBtn->setStyleSheet(
@@ -84,7 +76,6 @@ MainWindow::MainWindow(QWidget *parent)
         "QPushButton:hover { background-color: #d9e7ff;  }"
         );
 
-    // 关闭按钮
     QPushButton *closeBtn = new QPushButton(QChar(0x00D7), titleBar);
     closeBtn->setFixedSize(50, 30);
     closeBtn->setStyleSheet(
@@ -104,7 +95,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     titleLayout->addLayout(three_v);
 
-    // 连接按钮信号
     connect(closeBtn, &QPushButton::clicked, []() {
              exit(0); 
          });
@@ -119,16 +109,13 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    // 4. 创建内容区域
     QWidget *contentArea = new QWidget();
     contentArea->setStyleSheet("QWidget { background-color: #edf7ff; }");
     QVBoxLayout *contentLayout = new QVBoxLayout(contentArea);
     contentLayout->setContentsMargins(0,0,0,0);
     int height_content=100;
-    // 在这里添加你原本要显示的各种控件(界面左侧经典游戏+在其下面的五个图片按钮+五个游戏各自名称)
     contentLayout->addStretch(12);
 
-    //界面左侧经典游戏
     QString gameString=QChar(0x25B6);
     gameString+= tr(" 经典游戏");
     QLabel* gameLabel=new QLabel(gameString);
@@ -138,10 +125,8 @@ MainWindow::MainWindow(QWidget *parent)
     contentLayout->addWidget(gameLabel,5);
 
 
-    //五个游戏
     QHBoxLayout* layout = new QHBoxLayout();
 
-    // 创建几个不同样式的按钮
     QString photo(":/res/image/live.png");
     ButtonWithText* btn1 = new ButtonWithText(photo, tr("生死时速"));
     btn1->setButtonSize(250.0/2560.0*w_primary,270.0/1440.0*h_primary);
@@ -162,7 +147,6 @@ MainWindow::MainWindow(QWidget *parent)
     ButtonWithText* btn5 = new ButtonWithText(photo, tr("激流勇进"));
     btn5->setButtonSize(250.0 / 2560.0 * w_primary, 270.0 / 1440.0 * h_primary);
 
-    // 连接点击信号
     QObject::connect(btn1, &QPushButton::clicked, []() {
         qDebug() << "生死时速被点击！";
     });
@@ -205,17 +189,14 @@ MainWindow::MainWindow(QWidget *parent)
     contentLayout->addLayout(layout,25);
     contentLayout->addStretch(height_content-48);
 
-//----------------------------------------------------------------------------------
     QWidget* floor=new QWidget();
     floor->setStyleSheet("QWidget{background-color:#4f95ff}");
 
-    // 5. 组装
     int total=100.0;
     mainLayout->addWidget(titleBar,14.84);
     mainLayout->addWidget(contentArea,81.5);
-    mainLayout->addWidget(floor,total-81.5-14.84);    // 第二个参数是拉伸因子，让内容区域占满剩余空间
+    mainLayout->addWidget(floor,total-81.5-14.84);
 
-    // 6. 设置为中央控件
     setCentralWidget(centralContainer);
 
 }
@@ -228,12 +209,11 @@ MainWindow::~MainWindow()
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        // 将event->pos()转换为titleBar的局部坐标
         QPoint localPos = titleBar->mapFromParent(event->pos());
 
         if (titleBar->rect().contains(localPos)) {
             m_dragPosition = event->globalPos() - frameGeometry().topLeft();
-            m_bDrag = true;  // 添加拖动标志
+            m_bDrag = true;
             event->accept();
         }
     }
@@ -242,7 +222,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
     if ((event->buttons() & Qt::LeftButton) && m_bDrag) {
-        // 计算新位置并移动窗口
         move(event->globalPos() - m_dragPosition);
         event->accept();
     }
@@ -251,6 +230,6 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        m_bDrag = false;  // 释放时重置标志
+        m_bDrag = false;
     }
 }

@@ -19,12 +19,12 @@
 #include <QElapsedTimer> 
 #include <QDebug>
 
-// ========== 辅助宏 ==========
+
 constexpr double PI = 3.14159265358979323846;
 
-// ========== 游戏常量 ==========
+
 constexpr double bulletSpeed = 40.0;
-constexpr double turnRate = 0.2; // turnRate 已改为全局 constexpr
+constexpr double turnRate = 0.2;
 constexpr double SPAWN_BASE_SPEED = 2.0;
 constexpr double SPAWN_SPEED_MULTIPLIER = 1.0;
 constexpr double METEORITE_BASE_SPEED = 2.0;
@@ -35,7 +35,7 @@ constexpr double OSC_TIME_STEP = 0.05;
 constexpr int MAX_REWARD_WORDS = 1;
 constexpr double DEFAULT_REWARD_WORD_SPEED = 15.0;
 constexpr int GAME_OVER_DELAY_MS = 500;
-// =================================
+
 
 
 SpaceWarWidget::SpaceWarWidget(QWidget* parent)
@@ -45,7 +45,7 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     setFocusPolicy(Qt::StrongFocus);
 
 
-    // 加载图片
+
     m_playerPixmap.load(":/res/image/Space/Images/SPACE_SHIP.png");
     m_meteoritePixmap.load(":/res/image/Space/Images/SPACE_ENEMY_4.png");
     m_enemyPixmap.load(":/res/image/Space/Images/SPACE_ENEMY_0.png");
@@ -61,7 +61,7 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     m_mainMenuBackground.load(":/res/image/Space/Images/SPACE_MAINMENU_BG.png");
     m_gameBackground.load(":/res/image/Space/Images/SPACE_BACKGROUND.png");
 
-    // 主菜单按钮（三态图）
+
     m_startBtn = new TriStateButton(":/res/image/Space/Images/SPACE_START.png", this);
     m_highScoreBtn = new TriStateButton(":/res/image/Space/Images/SPACE_HISCORE.png", this);
     m_optionsBtn = new TriStateButton(":/res/image/Space/Images/SPACE_OPTION.png", this);
@@ -94,7 +94,7 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     m_gameTimer->setInterval(30);
     connect(m_gameTimer, &QTimer::timeout, this, &SpaceWarWidget::gameLoop);
 
-    // 难度升级倒计时 (每秒)
+
     m_upgradeTimer = new QTimer(this);
     m_upgradeTimer->setInterval(1000);
     connect(m_upgradeTimer, &QTimer::timeout, this, [this]() {
@@ -112,12 +112,12 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     connect(m_explosionCheckTimer, &QTimer::timeout, this, &SpaceWarWidget::onExplosionFrame);
     m_explosionCheckTimer->start();
 
-    // 奖励单词生成 (10秒)
+
     m_wordSpawnTimer = new QTimer(this);
     m_wordSpawnTimer->setInterval(10000);
     connect(m_wordSpawnTimer, &QTimer::timeout, this, &SpaceWarWidget::onWordSpawnTimer);
 
-    // 玩家动画定时器
+
     m_playerAnimTimer = new QTimer(this);
     m_playerAnimTimer->setInterval(100);
     connect(m_playerAnimTimer, &QTimer::timeout, [this]() {
@@ -125,7 +125,7 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
             m_playerFrame = (m_playerFrame + 1) % 11;
         });
 
-    // 背景音乐
+
     m_bgmPlayer = new QMediaPlayer(this);
     m_bgmPlayer->setMedia(QUrl("qrc:/res/image/Space/Sounds/SPACE_BG.mp3"));
     m_bgmPlayer->setVolume(50);
@@ -135,7 +135,7 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
         }
         });
 
-    // 音效
+
     m_shootSound = new QSoundEffect(this);
     m_shootSound->setSource(QUrl("qrc:/res/image/Space/Sounds/SPACE_SHOOT.wav"));
     m_explosionSound = new QSoundEffect(this);
@@ -145,7 +145,7 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     m_bonusSound = new QSoundEffect(this);
     m_bonusSound->setSource(QUrl("qrc:/res/image/Space/Sounds/SPACE_WORDOUT.wav"));
 
-    // 分数文件
+
     m_scoreFilePath = ":/data/data/space_highscores.txt";
 
     // 初始位置将在 resizeEvent 中设置
@@ -159,7 +159,7 @@ SpaceWarWidget::~SpaceWarWidget()
     }
 }
 
-// ==================== 窗口事件 ====================
+
 void SpaceWarWidget::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
@@ -214,7 +214,7 @@ void SpaceWarWidget::paintEvent(QPaintEvent*)
     }
 }
 
-// ==================== 绘制辅助 ====================
+
 void SpaceWarWidget::drawBackground(QPainter& p) {
     QPixmap* bgToDraw = nullptr;
 
@@ -237,28 +237,28 @@ void SpaceWarWidget::drawHUD(QPainter& p) {
     int w = width();
     int h = height();
 
-    // 顶部状态栏高度 = 窗口高度的 8%
+
     int barHeight = h * 0.11;
     QColor bgColor(0, 0, 0, 150);
     p.fillRect(0, 0, w, barHeight, bgColor);
 
-    // 图标大小 = 状态栏高度的 55%
-    int iconS = barHeight * 0.55;
-    int topY = (barHeight - iconS) / 2;  // 图标垂直居中
 
-    QFont f("Arial", iconS * 0.45);  // 字体大小跟随图标
+    int iconS = barHeight * 0.55;
+    int topY = (barHeight - iconS) / 2;
+
+    QFont f("Arial", iconS * 0.45);
     p.setFont(f);
     p.setPen(Qt::white);
 
-    // 将宽度三等分
+
     int sectionW = w / 3;
 
-    // ===== 左区域：得分 =====
+
     int scoreIconX = sectionW / 12;  // 图标在左边
     p.drawPixmap(scoreIconX, topY, 2*iconS, iconS, m_scoreIcon);
     p.drawText(scoreIconX + 2*iconS + 10, topY + iconS * 0.8, QString("%1").arg(m_score));
 
-    // ===== 中区域：生命 =====
+
     
     int heartIconX = w/3 + iconS;
     p.drawPixmap(heartIconX, topY, 2*iconS, iconS, m_heartIcon);
@@ -274,13 +274,13 @@ void SpaceWarWidget::drawHUD(QPainter& p) {
     double ratio = (double)m_lives / m_maxLives;
     p.fillRect(barX + 1, barY + 1, (barW - 2) * ratio, barH - 2, Qt::green);
 
-    // ===== 右区域：升级时间 =====
+
     int timeIconX = w - sectionW / 2 - iconS * 3;
     p.drawPixmap(timeIconX, topY, iconS*2, iconS, m_timeIcon);
     int secs = m_upgradeTimerCount / 1000;
     p.drawText(timeIconX + iconS*2 + 5, topY + iconS * 0.8, QString(" %1 s").arg(secs));
 
-    // 升级提示
+
     if (m_upgradedFlag) {
         p.setPen(Qt::blue);
         QFont smallF("Arial", iconS * 0.38, QFont::Bold);
@@ -316,7 +316,7 @@ void SpaceWarWidget::drawObjects(QPainter& p) {
             rows = 4; cols = 3; totalFrames = 11;
 
         }
-        //敌机或陨石的绘制
+
         if (pm->isNull()) continue;
         int fw = pm->width() / cols;
         int fh = pm->height() / rows;
@@ -327,10 +327,10 @@ void SpaceWarWidget::drawObjects(QPainter& p) {
         QRect target(obj.pos.x() - width() * 0.08 / 2, obj.pos.y() - height() * 0.12 / 2, width() * 0.08, height() * 0.12);
         p.drawPixmap(target, *pm, src);
 
-        //字母框
+
         QRect target_up(obj.pos.x() - width() * 0.08 / 2 + 17.0 / 65.0 * 0.08 * width(), obj.pos.y() - height() * 0.12 / 2, width() * 0.08 * (32.0 / 65.0), height() * 0.12 * (15.0 / 55.0));
         p.drawPixmap(target_up, m_enemyUp);
-        //字母
+
         p.setPen(Qt::green);
         QFont f("Arial", 20, QFont::Bold);
         p.setFont(f);
@@ -377,7 +377,7 @@ void SpaceWarWidget::drawRewardWords(QPainter& p) {
     }
 }
 
-// ==================== 游戏核心逻辑 ====================
+
 void SpaceWarWidget::initGame() {
     m_objects.clear();
     m_bullets.clear();
@@ -395,18 +395,18 @@ void SpaceWarWidget::initGame() {
 }
 
 void SpaceWarWidget::stopGame() {
-    // 停止所有计时器
+
     m_gameTimer->stop();
     m_upgradeTimer->stop();
     m_wordSpawnTimer->stop();
     m_playerAnimTimer->stop();
-    // 停止背景音乐
+
     m_bgmPlayer->stop();
 
-    //清空游戏数据与初始化
+
     initGame();
 
-    // 切换到主菜单
+
     m_showMainMenu = true;
     m_startBtn->show();
     m_highScoreBtn->show();
@@ -574,7 +574,7 @@ void SpaceWarWidget::updateObjects() {
 
         if (obj.pos.y() > height() + 50) {
             obj.toBeRemoved = true;
-            //m_score -= 800;
+
             releaseLetter(obj.letter);
         }
     }
@@ -594,7 +594,7 @@ void SpaceWarWidget::updateBullets() {
     for (auto& bullet : m_bullets) {
         if (!bullet.active) continue;
 
-        // 查找目标对象
+
         GameObject* target = nullptr;
         for (auto& obj : m_objects) {
             if (!obj.exploded && obj.letter == bullet.targetLetter) {
@@ -604,12 +604,12 @@ void SpaceWarWidget::updateBullets() {
         }
         if (target) bullet.targetPos = target->pos;
 
-        // 计算理想角度
+
         double dx = bullet.targetPos.x() - bullet.pos.x();
         double dy = bullet.targetPos.y() - bullet.pos.y();
         double desiredAngle = atan2(dy, dx);
 
-        // 角度差
+
         double diff = desiredAngle - bullet.currentAngle;  // ← 用存储的角度
         while (diff > PI) diff -= 2 * PI;
         while (diff < -PI) diff += 2 * PI;
@@ -618,22 +618,22 @@ void SpaceWarWidget::updateBullets() {
         
         bullet.currentAngle += qBound(-turnRate, diff, turnRate);  // ← 更新存储的角度
 
-        // 移动
+
         constexpr double bulletSpeed = 40.0;
         bullet.pos.rx() += bulletSpeed * cos(bullet.currentAngle);
         bullet.pos.ry() += bulletSpeed * sin(bullet.currentAngle);
 
-        // 目标消失，子弹到达最后位置附近
+
         if (!target && fabs(bullet.pos.x() - bullet.targetPos.x()) < 5 &&
             fabs(bullet.pos.y() - bullet.targetPos.y()) < 5) {
             bullet.active = false;
         }
-        // 飞出屏幕
+
         if (bullet.pos.x() < -20 || bullet.pos.x() > width() + 20 ||
             bullet.pos.y() > height() + 20 || bullet.pos.y() < -20)
             bullet.active = false;
     }
-    // 清理失效子弹
+
     m_bullets.erase(std::remove_if(m_bullets.begin(), m_bullets.end(),
         [](const Bullet& b) { return !b.active; }),
         m_bullets.end());
@@ -670,7 +670,7 @@ void SpaceWarWidget::checkCollisions() {
         if (playerRect.intersects(objRect)) {
             explodeObject(&obj);
             m_lives--;
-            //m_score -= 800;
+
             
             if (m_lives <= 0) {
                 checkEndGame();
@@ -774,7 +774,7 @@ void SpaceWarWidget::handleLetterInput(QChar letter) {
 
             double dx = obj.pos.x() - bullet.pos.x();
             double dy = obj.pos.y() - bullet.pos.y();
-            bullet.currentAngle = atan2(dy, dx);  // 初始直接瞄准目标
+            bullet.currentAngle = atan2(dy, dx);
 
             m_bullets.append(bullet);
             if (m_shootSound->isLoaded()) m_shootSound->play();
@@ -854,7 +854,7 @@ QString SpaceWarWidget::generateRewardWord() {
     return word.toUpper();
 }
 
-// ==================== 暂停与返回 ====================
+
 void SpaceWarWidget::pauseGame() {
     if (!m_gameActive || m_gamePaused) return;
     m_gamePaused = true;
@@ -896,7 +896,7 @@ void SpaceWarWidget::resumeGame() {
     update();
 }
 
-// ==================== 主菜单按钮槽 ====================
+
 void SpaceWarWidget::onStartClicked() {
     if (m_gamePaused) return;
     initGame();
@@ -911,7 +911,7 @@ void SpaceWarWidget::onStartClicked() {
     if (m_rewardEnabled) m_wordSpawnTimer->start();
     m_playerAnimTimer->start();
 
-    // 播放背景音乐
+
     if (m_soundEnabled && m_bgmPlayer->state() != QMediaPlayer::PlayingState) {
         m_bgmPlayer->play();
     }
@@ -923,7 +923,7 @@ void SpaceWarWidget::onHighScoreClicked() {
         m_highScoreDialog = new HighScoreDialog(m_scoreFilePath, this);
         m_highScoreDialog->loadScores();
     }
-    // 全屏显示
+
    
     m_highScoreDialog->exec();
 }
@@ -969,7 +969,7 @@ void SpaceWarWidget::onExitClicked() {
     }
 }
 
-// ==================== 事件 ====================
+
 void SpaceWarWidget::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Escape) {
         if (m_gameActive && !m_gamePaused) {
@@ -998,7 +998,7 @@ void SpaceWarWidget::keyPressEvent(QKeyEvent* event) {
 }
 
 void SpaceWarWidget::closeEvent(QCloseEvent* event) {
-    // 停止背景音乐
+
     if (m_bgmPlayer && m_bgmPlayer->state() == QMediaPlayer::PlayingState) {
         m_bgmPlayer->stop();
     }

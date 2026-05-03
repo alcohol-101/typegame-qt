@@ -1,12 +1,9 @@
 #include "applegamewidget.h"
 
-
-
 #include "settingsdialog.h"
 #include "exitconfirmdialog.h"
 
 
-// ========== constexpr 常量 ==========
 constexpr double APPLE_WIDTH_RATIO = 200.0 / 2560.0;
 constexpr double APPLE_HEIGHT_RATIO = 200.0 / 1440.0;
 constexpr double SMALL_APPLE_WIDTH_RATIO = 110.0 / 2560.0;
@@ -31,7 +28,6 @@ constexpr int MIN_STEP = 1;
 constexpr int MAX_SMALL_APPLES = 8;
 constexpr int STEP_DIVISOR = 8;
 constexpr int TARGET_OFFSET = 10;
-// =====================================
 
 AppleGameWidget::AppleGameWidget(QWidget* parent)
     : QWidget(parent)
@@ -49,32 +45,26 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
     , m_showGameElements(false)
     , m_soundEnabled(true)
 {
-    // 设置无边框全屏
     setWindowFlags(Qt::FramelessWindowHint);
-    setFocusPolicy(Qt::StrongFocus);  // 接收键盘事件
+    setFocusPolicy(Qt::StrongFocus);
 
-    // 加载图片资源
     m_normalApplePixmap.load(":/res/image/Apple/Images/APPLE_NORMAL.png");
     m_badApplePixmap.load(":/res/image/Apple/Images/APPLE_BAD.png");
     m_basketPixmap.load(":/res/image/Apple/Images/APPLE_BASKET.png");
     m_smallApplePixmap.load(":/res/image/Apple/Images/APPLE_SMALL.png");
-    // 背景图
     m_backgroundPixmap.load(":/res/image/Apple/Images/APPLE_BACKGROUND.png");
 
    
 
-    // 设置苹果绘制大小
     m_appleSize = QSize(APPLE_WIDTH_RATIO * w_primary, APPLE_HEIGHT_RATIO * h_primary);
     m_smallAppleSize = QSize(SMALL_APPLE_WIDTH_RATIO * w_primary, SMALL_APPLE_HEIGHT_RATIO * h_primary);
 
-    // 创建底部控制按钮区域
     QWidget* controlWidget = new QWidget(this);
-    controlWidget->setStyleSheet("background-color: rgba(0,0,0,0);"); // 透明
+    controlWidget->setStyleSheet("background-color: rgba(0,0,0,0);");
     QHBoxLayout* controlLayout = new QHBoxLayout(controlWidget);
     controlLayout->setContentsMargins(20, 10, 20, 20);
     controlLayout->setSpacing(15);
 
-    // 退出按钮（左下角）
     m_exitBtn = new QPushButton(controlWidget);
     m_exitBtn->setFixedSize(EXIT_BTN_WIDTH_RATIO * w_primary, EXIT_BTN_HEIGHT_RATIO * h_primary);
     m_exitBtn->setStyleSheet(
@@ -142,31 +132,26 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
 
     controlLayout->addStretch();
 
-    // 主布局：控制栏在底部
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addStretch();
     mainLayout->addWidget(controlWidget);
 
-    // 连接按钮信号
     connect(m_startBtn, &QPushButton::clicked, this, &AppleGameWidget::onStartClicked);
     connect(m_pauseBtn, &QPushButton::clicked, this, &AppleGameWidget::onPauseClicked);
     connect(m_stopBtn, &QPushButton::clicked, this, &AppleGameWidget::onStopClicked);
     connect(m_settingsBtn, &QPushButton::clicked, this, &AppleGameWidget::onSettingsClicked);
 
-    // 定时器设置
     m_updateTimer->setInterval(30); // 约33fps
     connect(m_updateTimer, &QTimer::timeout, this, &AppleGameWidget::onUpdateTimer);
 
-    // 初始化按钮状态
     m_pauseBtn->setEnabled(false);
     m_stopBtn->setEnabled(false);
 
 
-    // 初始化背景音乐播放器
     m_bgmPlayer = new QMediaPlayer(this);
     m_bgmPlayer->setMedia(QUrl("qrc:/res/image/Apple/Sounds/APPLE_BG.mp3"));
-    m_bgmPlayer->setVolume(50); // 音量 0-100
+    m_bgmPlayer->setVolume(50);
     // 设置循环播放（QMediaPlayer 默认不循环，通过信号实现）
     connect(m_bgmPlayer, &QMediaPlayer::mediaStatusChanged, this, [this](QMediaPlayer::MediaStatus status) 
         {
@@ -176,19 +161,16 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
             }
         });
 
-    // ========== 悬浮音效初始化 ==========
     m_hoverSoundEffect = new QSoundEffect(this);
     m_hoverSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/ANIBTN_ENTER.wav"));
-    m_hoverSoundEffect->setVolume(1.0f);  // 音量 0.0 ~ 1.0
+    m_hoverSoundEffect->setVolume(1.0f);
 
-    // 初始化点击音效
     m_clickSoundEffect = new QSoundEffect(this);
-    m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));  // 点击音效文件路径
+    m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));
     m_clickSoundEffect->setVolume(1.0f);
 
-    // ========== 消除苹果成功音效初始化 ==========
     m_successSoundEffect = new QSoundEffect(this);
-    m_successSoundEffect->setSource(QUrl("qrc:/res/image/Apple/Sounds/APPLE_IN.wav"));  // 根据实际路径修改
+    m_successSoundEffect->setSource(QUrl("qrc:/res/image/Apple/Sounds/APPLE_IN.wav"));
     m_successSoundEffect->setVolume(1.0f);
 
     // 安装事件过滤器到自身，这样会监听本窗口及所有子控件的事件
@@ -226,7 +208,6 @@ void AppleGameWidget::startGame()
 
     setFocus(); // 确保接收键盘事件
 
-    // 播放背景音乐
     if (m_soundEnabled && m_bgmPlayer->state() != QMediaPlayer::PlayingState) {
         m_bgmPlayer->play();
     }
@@ -240,7 +221,6 @@ void AppleGameWidget::pauseGame()
     m_showGameElements = false;
     m_updateTimer->stop();
 
-    // 暂停背景音乐
     if (m_soundEnabled) m_bgmPlayer->pause();
 
     update();
@@ -254,7 +234,6 @@ void AppleGameWidget::resumeGame()
     m_showGameElements = true;
     m_updateTimer->start();
 
-    // 恢复背景音乐
     if (m_soundEnabled) m_bgmPlayer->play();
 
     update();
@@ -273,9 +252,8 @@ void AppleGameWidget::stopGame()
     m_stopBtn->setEnabled(false);
     m_settingsBtn->setEnabled(true);
 
-    resetGameState(); // 清除所有苹果，重置计数
+    resetGameState();
 
-    // 停止并重置背景音乐到开头
     m_bgmPlayer->stop();
 
     update();
@@ -320,18 +298,16 @@ void AppleGameWidget::onSettingsClicked()
 
 void AppleGameWidget::onExitClicked()
 {
-    pauseGame();           // 暂停
+    pauseGame();
 
-    // 创建自定义按钮
     ExitConfirmDialog dialog(this, ":/res/image/Common/Images/MAIN_DLG_BG.png", ":/res/image/Common/Images/MAIN_DLG_EXIT.png",
         ":/res/image/Common/Images/MAIN_DLG_REPLAY.png", tr("你真的要退出吗？"));
     dialog.exec();  // 模态显示
 
     if (dialog.isConfirmed()) {
-        close();  // 关闭游戏窗口
-        m_bgmPlayer->stop();//关闭音乐
+        close();
+        m_bgmPlayer->stop();
     }
-    // 否则什么都不做，继续游戏
     resumeGame();
 
 }
@@ -346,7 +322,6 @@ void AppleGameWidget::onUpdateTimer()
         generateApple();
     }
 
-    // 移动苹果
 
     qreal bottomThreshold = height() * BOTTOM_THRESHOLD_RATIO;
 
@@ -359,13 +334,11 @@ void AppleGameWidget::onUpdateTimer()
         int letterIndex = apple.letter.toLatin1() - 'A';  // A=0, B=1, ..., Z=25
         qreal speedFactor = SPEED_FACTOR_BASE + (letterIndex / ALPHABET_SIZE) * SPEED_FACTOR_RANGE;
 
-        // 基础速度 + 字母速度变化
         qreal baseSpeed = BASE_SPEED_MIN + m_random.bounded(m_speedLevel) * BASE_SPEED_MULTIPLIER;
         qreal speed = baseSpeed * speedFactor;
 
         apple.pos.ry() += speed;
 
-        // 检查是否到达底部区域且尚未变坏
         if (apple.pos.y() + m_appleSize.height() >= bottomThreshold && !apple.isBad) {
             convertAppleToBad(apple);
             // 注意：convertAppleToBad会设置isBad并启动计时器，不立即移除
@@ -380,7 +353,6 @@ void AppleGameWidget::onAppleBadTimeout()
     QTimer* timer = qobject_cast<QTimer*>(sender());
     if (!timer) return;
 
-    // 查找对应的苹果并移除
     for (int i = 0; i < m_apples.size(); ++i) {
         if (m_apples[i].badTimer == timer) {
             m_apples.removeAt(i);
@@ -408,7 +380,6 @@ void AppleGameWidget::applySettings(int level, int targetCount, int maxBadCount,
 
 void AppleGameWidget::generateApple()
 {
-    // 字母池 A-Z
     QString alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     QList<QChar> usedLetters;
     for (const Apple& a : m_apples) {
@@ -429,7 +400,6 @@ void AppleGameWidget::generateApple()
     apple.letter = letter;
     apple.isBad = false;
     apple.badTimer = nullptr;
-    // 初始位置：x随机，y=0
     qreal x = m_random.bounded(width() - m_appleSize.width());
     apple.pos = QPointF(x, 0);
 
@@ -444,7 +414,6 @@ void AppleGameWidget::removeAppleByLetter(QChar letter)
             m_apples.removeAt(i);
             m_successCount++;
 
-            // ========== 播放成功音效 ==========
             if (m_soundEnabled && m_successSoundEffect && m_successSoundEffect->isLoaded()) {
                 m_successSoundEffect->play();
             }
@@ -479,7 +448,6 @@ void AppleGameWidget::updateBasketSmallApples()
 
 void AppleGameWidget::resetGameState()
 {
-    // 清除所有苹果及其计时器
     for (Apple& a : m_apples) {
         if (a.badTimer) {
             a.badTimer->stop();
@@ -506,7 +474,6 @@ void AppleGameWidget::checkGameOver()
         m_showGameElements = false;
         m_updateTimer->stop();
 
-        // 计算准确率
         int total = m_successCount + m_badCount;
         double accuracy = total > 0 ? (m_successCount * 100.0 / total) : 0.0;
         QString accuracyText = tr("准确率: %1%").arg(accuracy, 0, 'f', 1);
@@ -558,7 +525,7 @@ void AppleGameWidget::checkGameOver()
                 stopGame();
                 startGame();
             }
-            else {//结束
+            else {
                 stopGame();
             }
         }
@@ -596,7 +563,6 @@ void AppleGameWidget::drawApples(QPainter& painter)
         QRectF targetRect(apple.pos, m_appleSize);
         painter.drawPixmap(targetRect.toRect(), pix);
 
-        // 绘制字母
         painter.setPen(Qt::white);
         QFont font = painter.font();
         font.setBold(true);
@@ -608,7 +574,6 @@ void AppleGameWidget::drawApples(QPainter& painter)
 
 void AppleGameWidget::drawBasketAndSmallApples(QPainter& painter)
 {
-    // 篮子绘制在右下角
     int basketWidth = BASKET_WIDTH_RATIO * w_primary;
     int basketHeight = BASKET_HEIGHT_RATIO * h_primary;
     int margin = BASKET_MARGIN_RATIO * w_primary;
@@ -621,22 +586,18 @@ void AppleGameWidget::drawBasketAndSmallApples(QPainter& painter)
     int smallW = m_smallAppleSize.width();
     int smallH = m_smallAppleSize.height();
 
-    // 垂直重叠量
     int verticalOverlap = smallH / VERTICAL_OVERLAP_DIVISOR;
 
-    // 计算篮子内部区域
     int basketInnerMargin = BASKET_INNER_MARGIN;
     int basketInnerX = m_basketPos.x() + basketInnerMargin;
     int basketInnerY = m_basketPos.y() + basketInnerMargin;
     int basketInnerWidth = basketWidth - 2 * basketInnerMargin;
     int basketInnerHeight = basketHeight - 2 * basketInnerMargin;
 
-    // 垂直方向位置
     int bottomY = basketInnerY + basketInnerHeight - smallH;
     int middleY = bottomY - smallH + verticalOverlap;
     int topY = middleY - smallH + verticalOverlap;
 
-    // 计算水平位置
     int sectionWidth = basketInnerWidth / 3;
 
     // 第一层三个苹果的中心X
@@ -657,20 +618,17 @@ void AppleGameWidget::drawBasketAndSmallApples(QPainter& painter)
 
     int drawn = 0;
 
-    // 定义绘制结构
     struct ApplePosition {
         int centerX;
         int y;
     };
 
-    // 所有苹果的位置（按绘制顺序，从下往上）
     QList<ApplePosition> positions = {
         {bottomX1, bottomY}, {bottomX2, bottomY}, {bottomX3, bottomY},  // 底层3个
         {middleX1, middleY}, {middleX2, middleY},                        // 中层2个
         {topX1, topY}, {topX2, topY}, {topX3, topY}                      // 顶层3个
     };
 
-    // 绘制小苹果
     for (int i = 0; i < m_smallAppleCount && i < positions.size(); ++i) {
         const ApplePosition& pos = positions[m_smallAppleCount - 1 - i];
         painter.drawPixmap(QRect(getDrawX(pos.centerX), pos.y, smallW, smallH), m_smallApplePixmap);
@@ -725,12 +683,10 @@ void AppleGameWidget::resizeEvent(QResizeEvent* event)
 }
 
 void AppleGameWidget::closeEvent(QCloseEvent* event) {
-    // 如果游戏还在运行，先停止
     if (m_gameActive) {
         stopGame();  // stopGame 中已经调用了 m_bgmPlayer->stop()
     }
 
-    // 额外确保音乐停止
     if (m_bgmPlayer && m_bgmPlayer->state() == QMediaPlayer::PlayingState) {
         m_bgmPlayer->stop();
     }
@@ -745,14 +701,12 @@ bool AppleGameWidget::eventFilter(QObject* obj, QEvent* event)
         return QWidget::eventFilter(obj, event);
     }
 
-    // 处理鼠标进入事件（悬浮音效）
     if (event->type() == QEvent::Enter) {
         if (m_soundEnabled && m_hoverSoundEffect && m_hoverSoundEffect->isLoaded()) {
             m_hoverSoundEffect->play();
         }
     }
 
-    // 处理鼠标按下事件（点击音效）
     if (event->type() == QEvent::MouseButtonPress) {
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         if (mouseEvent->button() == Qt::LeftButton) {
@@ -762,6 +716,5 @@ bool AppleGameWidget::eventFilter(QObject* obj, QEvent* event)
         }
     }
 
-    // 继续传递事件给默认处理器
     return QWidget::eventFilter(obj, event);
 }

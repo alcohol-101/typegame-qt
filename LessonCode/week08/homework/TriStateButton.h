@@ -1,4 +1,3 @@
-// TriStateButton.h
 #ifndef TRISTATEBUTTON_H
 #define TRISTATEBUTTON_H
 
@@ -13,8 +12,8 @@ public:
     explicit TriStateButton(const QString& imagePath, QWidget* parent = nullptr);
     void setFixedSize(int w, int h);
 
-    void setHoverSound(const QString& soundPath);    // 悬浮音效
-    void setPressedSound(const QString& soundPath);  // 按下音效
+    void setHoverSound(const QString& soundPath);
+    void setPressedSound(const QString& soundPath);
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -24,13 +23,12 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
-    // 三帧独立存储
     QPixmap m_frames[3];   // [0]=默认, [1]=Hover, [2]=按下
     enum State { Normal, Hover, Pressed };
     State m_state;
 
-    QSoundEffect* m_hoverSound = nullptr;    // 悬浮音效
-    QSoundEffect* m_pressedSound = nullptr;  // 按下音效
+    QSoundEffect* m_hoverSound = nullptr;
+    QSoundEffect* m_pressedSound = nullptr;
 };
 
 #endif // TRISTATEBUTTON_H

@@ -1,4 +1,3 @@
-// NameInputDialog.h
 #ifndef NAMEINPUTDIALOG_H
 #define NAMEINPUTDIALOG_H
 
@@ -20,7 +19,6 @@ protected:
 private:
     QLineEdit *m_lineEdit;
     QPushButton *m_okBtn, *m_cancelBtn;
-    //QPixmap m_background;
 };
 
 #endif // NAMEINPUTDIALOG_H
