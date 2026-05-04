@@ -1,0 +1,17 @@
+{
+    "letters": "abcdefghijklmnopqrst",
+    "settings": {
+        "speed": 3,
+        "targetAppleCount": 100,
+        "maxBadAppleCount": 9999,
+        "maxAppleCount": 1
+    },
+    "testGameDuration": 30,
+    "testConfig": {
+        "correctRounds": 1,
+        "errorRounds": 1,
+        "allWrongRounds": 1,
+        "errorFrequency": 5,
+        "errorToleranceRatioForWithErrors": 0.05
+    }
+}

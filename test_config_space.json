@@ -1,0 +1,17 @@
+{
+    "letters": "sdhadalijdawjdodajdjvjdawjdkjwldaiidjakljsdklajs",
+    "settings": {
+        "enemysNum": 1,
+        "enemysSpeed": 3,
+        "isPrize": false,
+        "upgradeInterval": 120
+    },
+    "testGameDuration": 30,
+    "testConfig": {
+        "correctRounds": 1,
+        "errorRounds": 1,
+        "allWrongRounds": 1,
+        "errorFrequency": 5,
+        "errorToleranceRatioForWithErrors": 0.05
+    }
+}
