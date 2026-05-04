@@ -59,8 +59,8 @@ void HighScoreDialog::loadScores()
             }
         }
         file.close();
-
-        
+    } else {
+        qWarning() << "HighScoreDialog: Cannot open scores file:" << m_filePath;
     }
 
     std::sort(m_entries.begin(), m_entries.end(), [](const auto& a, const auto& b) {

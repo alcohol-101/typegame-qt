@@ -67,5 +67,6 @@
     </qresource>
     <qresource prefix="/data">
         <file>data/word.txt</file>
+        <file>data/space_highscores.txt</file>
     </qresource>
 </RCC>

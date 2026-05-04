@@ -37,7 +37,13 @@ endif()
 add_custom_command(TARGET typegame POST_BUILD
     COMMAND ${RCC_TOOL} --binary ${RES_GAME} -o "$<TARGET_FILE_DIR:typegame>/res_game.rcc"
     COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:typegame>/data"
-    COMMENT "Compiling game resources into res_game.rcc"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/data/space_highscores.txt"
+        "$<TARGET_FILE_DIR:typegame>/data/space_highscores.txt"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/data/word.txt"
+        "$<TARGET_FILE_DIR:typegame>/data/word.txt"
+    COMMENT "Compiling game resources into res_game.rcc and copying data files"
 )
 
 target_link_libraries(typegame
