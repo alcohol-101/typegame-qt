@@ -45,6 +45,7 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
     , m_showGameElements(false)
     , m_soundEnabled(true)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     setFocusPolicy(Qt::StrongFocus);
 
     QScreen* sc = QApplication::primaryScreen();

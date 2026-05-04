@@ -48,6 +48,7 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     : QWidget(parent)
 {
     setFocusPolicy(Qt::StrongFocus);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     QScreen* sc = QApplication::primaryScreen();
     QRect sg = sc->availableGeometry();
@@ -1098,10 +1099,7 @@ void SpaceWarWidget::keyPressEvent(QKeyEvent* event) {
 }
 
 void SpaceWarWidget::closeEvent(QCloseEvent* event) {
-
-    if (m_bgmPlayer && m_bgmPlayer->state() == QMediaPlayer::PlayingState) {
-        m_bgmPlayer->stop();
-    }
+    stopGame();
 
     if (m_highScoreDialog) m_highScoreDialog->saveScores();
     event->accept();
