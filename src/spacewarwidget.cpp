@@ -49,6 +49,7 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
 {
     setFocusPolicy(Qt::StrongFocus);
     setAttribute(Qt::WA_DeleteOnClose);
+    setMinimumSize(640, 400);
 
     QScreen* sc = QApplication::primaryScreen();
     QRect sg = sc->availableGeometry();
@@ -193,9 +194,9 @@ void SpaceWarWidget::resizeEvent(QResizeEvent* event)
     m_returnBtn->move(m_startBtn->pos());
     m_returnBtn->hide();
 
-    if (!m_gameActive && m_showMainMenu) {
-        m_playerPos.setY(h * 0.85);
-    }
+    m_playerPos.setY(h * 0.85);
+    double halfW = width() * 0.05;
+    m_playerPos.setX(qBound(halfW, m_playerPos.x(), width() - halfW));
 }
 
 void SpaceWarWidget::paintEvent(QPaintEvent*)
