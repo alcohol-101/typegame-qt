@@ -9,6 +9,7 @@
 #include<QDebug>
 #include<QScreen>
 #include<QApplication>
+#include<QTimer>
 
 #include "buttonwithtext.h"
 #include "applegamewidget.h"
@@ -111,6 +112,21 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
+    mainLayout->addWidget(titleBar, 14.84);
+    setCentralWidget(centralContainer);
+    QTimer::singleShot(0, this, &MainWindow::setupContent);
+}
+
+void MainWindow::setupContent()
+{
+    QScreen* screen = QApplication::primaryScreen();
+    QRect fullGeometry = screen->geometry();
+    double w_primary = fullGeometry.width();
+    double h_primary = fullGeometry.height();
+
+    QWidget* cw = centralWidget();
+    QVBoxLayout* mainLayout = qobject_cast<QVBoxLayout*>(cw->layout());
+
     QWidget *contentArea = new QWidget();
     contentArea->setStyleSheet("QWidget { background-color: #edf7ff; }");
     QVBoxLayout *contentLayout = new QVBoxLayout(contentArea);
@@ -162,8 +178,7 @@ MainWindow::MainWindow(QWidget *parent)
         if (!ensureGameResources())
             return;
         AppleGameWidget* gameWidget = new AppleGameWidget();
-        gameWidget->showFullScreen(); 
-        // 当游戏窗口关闭时，重新显示主窗口
+        gameWidget->show();
         QObject::connect(gameWidget, &QWidget::destroyed, this, [this]() {
             this->show();
             });
@@ -174,7 +189,7 @@ MainWindow::MainWindow(QWidget *parent)
         if (!ensureGameResources())
             return;
         SpaceWarWidget* gameWidget = new SpaceWarWidget();
-        gameWidget->showFullScreen();
+        gameWidget->show();
         QObject::connect(gameWidget, &QWidget::destroyed, this, [this]() {
             this->show();
             });
@@ -199,12 +214,8 @@ MainWindow::MainWindow(QWidget *parent)
     floor->setStyleSheet("QWidget{background-color:#4f95ff}");
 
     int total=100.0;
-    mainLayout->addWidget(titleBar,14.84);
     mainLayout->addWidget(contentArea,81.5);
     mainLayout->addWidget(floor,total-81.5-14.84);
-
-    setCentralWidget(centralContainer);
-
 }
 
 MainWindow::~MainWindow()

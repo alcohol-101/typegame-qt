@@ -7,7 +7,7 @@
 #include <QMessageBox>
 #include <QPalette>
 #include <QPixmap>
-#include <QEvent>  
+#include <QEvent>
 #include <QMouseEvent>
 
 #include "exitconfirmdialog.h"

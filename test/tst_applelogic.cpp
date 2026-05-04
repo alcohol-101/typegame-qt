@@ -29,7 +29,6 @@ void TestAppleGameWidget::initTestCase()
 void TestAppleGameWidget::testConstructor()
 {
     QVERIFY(widget != nullptr);
-    QVERIFY(widget->windowFlags() & Qt::FramelessWindowHint);
     QCOMPARE(widget->focusPolicy(), Qt::StrongFocus);
 }
 

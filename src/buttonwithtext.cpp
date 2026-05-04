@@ -23,22 +23,14 @@ ButtonWithText::ButtonWithText(const QString& btnText, const QString& labelText,
     m_map->setScaledContents(true);
 
     QPixmap pixmap(btnText);
-    QPixmap stretched = pixmap.scaled(
-        imageContainer->size(),
-        Qt::KeepAspectRatio,
-        Qt::SmoothTransformation
-        );
-
     if (!pixmap.isNull()) {
-        m_map->setPixmap(stretched);
+        m_map->setPixmap(pixmap);
     }
 
     QHBoxLayout* imageLayout = new QHBoxLayout(imageContainer);
     imageLayout->setContentsMargins(0, 0, 0, 0);
     imageLayout->setSpacing(0);
     imageLayout->addWidget(m_map,1);
-
-
 
     m_label = new QLabel(labelText,this);
     m_label->setAlignment(Qt::AlignCenter);

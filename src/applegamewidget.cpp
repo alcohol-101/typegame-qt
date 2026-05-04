@@ -45,8 +45,12 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
     , m_showGameElements(false)
     , m_soundEnabled(true)
 {
-    setWindowFlags(Qt::FramelessWindowHint);
     setFocusPolicy(Qt::StrongFocus);
+
+    QScreen* sc = QApplication::primaryScreen();
+    QRect sg = sc->availableGeometry();
+    resize(sg.width() * 0.8, sg.height() * 0.8);
+    move((sg.width() - width()) / 2, (sg.height() - height()) / 2);
 
     m_normalApplePixmap.load(":/res/image/Apple/Images/APPLE_NORMAL.png");
     m_badApplePixmap.load(":/res/image/Apple/Images/APPLE_BAD.png");
@@ -268,6 +272,9 @@ void AppleGameWidget::showSettings()
             this, &AppleGameWidget::applySettings);
     }
     m_settingsDialog->setCurrentValues(m_speedLevel, m_targetAppleCount, m_maxBadAppleCount, m_maxAppleCount, m_soundEnabled);
+    QPoint winCenter = frameGeometry().center();
+    m_settingsDialog->move(winCenter.x() - m_settingsDialog->width() / 2,
+                           winCenter.y() - m_settingsDialog->height() / 2);
     m_settingsDialog->exec();
 
     resumeGame();
@@ -599,9 +606,9 @@ void AppleGameWidget::drawApples(QPainter& painter)
 
 void AppleGameWidget::drawBasketAndSmallApples(QPainter& painter)
 {
-    int basketWidth = BASKET_WIDTH_RATIO * w_primary;
-    int basketHeight = BASKET_HEIGHT_RATIO * h_primary;
-    int margin = BASKET_MARGIN_RATIO * w_primary;
+    int basketWidth = BASKET_WIDTH_RATIO * width();
+    int basketHeight = BASKET_HEIGHT_RATIO * height();
+    int margin = BASKET_MARGIN_RATIO * width();
     m_basketPos = QPoint(width() - basketWidth - margin, height() - basketHeight - margin - 60);
 
     painter.drawPixmap(QRect(m_basketPos, QSize(basketWidth, basketHeight)), m_basketPixmap);
@@ -699,6 +706,10 @@ void AppleGameWidget::resizeEvent(QResizeEvent* event)
     QWidget::resizeEvent(event);
     int w = width();
     int h = height();
+
+    m_appleSize = QSize(APPLE_WIDTH_RATIO * w, APPLE_HEIGHT_RATIO * h);
+    m_smallAppleSize = QSize(SMALL_APPLE_WIDTH_RATIO * w, SMALL_APPLE_HEIGHT_RATIO * h);
+    m_exitBtn->setFixedSize(EXIT_BTN_WIDTH_RATIO * w, EXIT_BTN_HEIGHT_RATIO * h);
 
     int size_up = w * 0.0508;     // 或 h * 0.0903
     int size_right = w * 0.0586;  // 或 h * 0.1042

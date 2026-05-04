@@ -22,6 +22,7 @@ public:
     void MainWindow::mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
+    void setupContent();
     Ui::MainWindow *ui;
     QPoint m_dragPosition;
     QWidget *titleBar;

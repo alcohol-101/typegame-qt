@@ -17,6 +17,11 @@ if(WIN32)
     add_compile_options(/utf-8)
 endif()
 
+if(MSVC)
+    add_compile_options("$<$<CONFIG:Release>:/GL>")
+    add_link_options("$<$<CONFIG:Release>:/LTCG>")
+endif()
+
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets Multimedia Network Test)
 
 message(STATUS "Qt5 found: ${Qt5_VERSION}")

@@ -47,8 +47,12 @@ static const int LLM_PREFILL_COUNT = 3;
 SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     : QWidget(parent)
 {
-    setWindowFlags(Qt::FramelessWindowHint);
     setFocusPolicy(Qt::StrongFocus);
+
+    QScreen* sc = QApplication::primaryScreen();
+    QRect sg = sc->availableGeometry();
+    resize(sg.width() * 0.8, sg.height() * 0.8);
+    move((sg.width() - width()) / 2, (sg.height() - height()) / 2);
 
 
 
@@ -1043,6 +1047,9 @@ void SpaceWarWidget::onOptionsClicked() {
             });
     }
     m_settingsDialog->setCurrentValues(m_enemyMaxCount, m_speedLevel, m_upgradeIntervalMs / 1000, m_rewardEnabled);
+    QPoint winCenter = frameGeometry().center();
+    m_settingsDialog->move(winCenter.x() - m_settingsDialog->width() / 2,
+                           winCenter.y() - m_settingsDialog->height() / 2);
     m_settingsDialog->exec();
 }
 
