@@ -16,7 +16,6 @@
 #include "spacewarwidget.h"
 #include "respath.h"
 
-using namespace std;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(nullptr)
