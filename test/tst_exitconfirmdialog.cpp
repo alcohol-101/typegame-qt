@@ -1,3 +1,8 @@
+// filename: tst_exitconfirmdialog.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-05-06
+// description: Unit tests for ExitConfirmDialog
+
 #include <QtTest>
 #include <QApplication>
 #include "exitconfirmdialog.h"
@@ -5,6 +10,8 @@
 class TestExitConfirmDialog : public QObject
 {
     Q_OBJECT
+
+public:
 
 private slots:
     void testTwoButtonConstructor();

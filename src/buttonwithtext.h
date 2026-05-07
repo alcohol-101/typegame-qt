@@ -1,5 +1,10 @@
-﻿#ifndef BUTTONWITHTEXT_H
-#define BUTTONWITHTEXT_H
+// filename: buttonwithtext.h
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Custom button with image and text label, hover effects
+
+#ifndef _TYPEGAME_BUTTONWITHTEXT_H_
+#define _TYPEGAME_BUTTONWITHTEXT_H_
 
 #include <QPushButton>
 #include <QLabel>
@@ -17,16 +22,15 @@ public:
     void setLabelStyle(const QString& styleSheet);
     QLabel* getLabel() const { return m_label; }
 
-
 protected:
     bool eventFilter(QObject* obj, QEvent* event) override;
     void enterEvent(QEvent* event) override;
     void leaveEvent(QEvent* event) override;
 
 private:
-    QLabel *m_map;
+    QLabel* m_map;
     QLabel* m_label;
     QVBoxLayout* m_layout;
 };
 
-#endif // BUTTONWITHTEXT_H
+#endif // _TYPEGAME_BUTTONWITHTEXT_H_

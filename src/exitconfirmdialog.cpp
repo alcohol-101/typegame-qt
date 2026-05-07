@@ -1,3 +1,8 @@
+// filename: exitconfirmdialog.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Implementation of ExitConfirmDialog
+
 #include "exitconfirmdialog.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -8,8 +13,7 @@
 constexpr double TRIPLE_STATE_BTN_DIVISOR = 3.0;
 constexpr int BORDER_IMAGE_MULTIPLIER = 2;
 
-
-ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString left_url, QString right_url, QString text)
+ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, const QString& back_url, const QString& left_url, const QString& right_url, const QString& text)
     : QDialog(parent)
     , m_confirmed(false)
 {
@@ -54,11 +58,11 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     btnLayout->setSpacing(30);
     btnLayout->addStretch();
 
-    QPixmap* left_map = new QPixmap(left_url);
-    QPixmap* right_map = new QPixmap(right_url);
+    QPixmap left_map(left_url);
+    QPixmap right_map(right_url);
 
-    qreal left_width = left_map->width() / TRIPLE_STATE_BTN_DIVISOR;
-    qreal right_width = right_map->width() / TRIPLE_STATE_BTN_DIVISOR;
+    qreal left_width = left_map.width() / TRIPLE_STATE_BTN_DIVISOR;
+    qreal right_width = right_map.width() / TRIPLE_STATE_BTN_DIVISOR;
 
     QPushButton* confirmBtn = new QPushButton(this);
     confirmBtn->setFixedSize(92, 46);
@@ -70,7 +74,7 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
          QPushButton:hover {
             border-image: url("%1") 0 %2 0 %2;
         }
-    )").arg(left_url).arg(left_width).arg(BORDER_IMAGE_MULTIPLIER * left_width);
+    )").arg(left_url).arg(left_width).arg(BORDER_IMAGE_MULTIPLIER* left_width);
     confirmBtn->setStyleSheet(confirmStyle);
     btnLayout->addWidget(confirmBtn);
     btnLayout->addStretch();
@@ -85,7 +89,7 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
         QPushButton:hover {
             border-image: url("%1") 0 %2 0 %2;
         }
-    )").arg(right_url).arg(right_width).arg(BORDER_IMAGE_MULTIPLIER * right_width);
+    )").arg(right_url).arg(right_width).arg(BORDER_IMAGE_MULTIPLIER* right_width);
     continueBtn->setStyleSheet(confirmStyle);
 
     btnLayout->addWidget(continueBtn);
@@ -118,7 +122,7 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
 }
 
 
-ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString left_url, QString min_url, QString right_url, QString text)
+ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, const QString& back_url, const QString& left_url, const QString& min_url, const QString& right_url, const QString& text)
     : QDialog(parent)
     , m_confirmed(false)
 {
@@ -163,13 +167,13 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
     btnLayout->setSpacing(20);
     btnLayout->addStretch();
 
-    QPixmap* left_map = new QPixmap(left_url);
-    QPixmap* min_map = new QPixmap(min_url);
-    QPixmap* right_map = new QPixmap(right_url);
+    QPixmap left_map(left_url);
+    QPixmap min_map(min_url);
+    QPixmap right_map(right_url);
 
-    qreal left_width = left_map->width() / TRIPLE_STATE_BTN_DIVISOR;
-    qreal min_width = min_map->width() / 3;
-    qreal right_width = right_map->width() / TRIPLE_STATE_BTN_DIVISOR;
+    qreal left_width = left_map.width() / TRIPLE_STATE_BTN_DIVISOR;
+    qreal min_width = min_map.width() / 3;
+    qreal right_width = right_map.width() / TRIPLE_STATE_BTN_DIVISOR;
 
     QPushButton* confirmBtn = new QPushButton(this);
     confirmBtn->setFixedSize(92, 46);
@@ -181,7 +185,7 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
          QPushButton:hover {
             border-image: url("%1") 0 %2 0 %2;
         }
-    )").arg(left_url).arg(left_width).arg(BORDER_IMAGE_MULTIPLIER * left_width);
+    )").arg(left_url).arg(left_width).arg(BORDER_IMAGE_MULTIPLIER* left_width);
     confirmBtn->setStyleSheet(confirmStyle);
     btnLayout->addWidget(confirmBtn);
     btnLayout->addStretch();
@@ -211,7 +215,7 @@ ExitConfirmDialog::ExitConfirmDialog(QWidget* parent, QString back_url, QString 
         QPushButton:hover {
             border-image: url("%1") 0 %2 0 %2;
         }
-    )").arg(right_url).arg(right_width).arg(BORDER_IMAGE_MULTIPLIER * right_width);
+    )").arg(right_url).arg(right_width).arg(BORDER_IMAGE_MULTIPLIER* right_width);
     continueBtn->setStyleSheet(confirmStyle);
     btnLayout->addWidget(continueBtn);
     btnLayout->addStretch();

@@ -1,6 +1,9 @@
+// filename: gametestrunner.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-05
+// description: Implementation of GameTestRunner
+
 #include "gametestrunner.h"
-#include "applegamewidget.h"
-#include "spacewarwidget.h"
 
 #include <QApplication>
 #include <QJsonDocument>
@@ -11,6 +14,10 @@
 #include <QTest>
 #include <QDebug>
 #include <cmath>
+#include <memory>
+
+#include "applegamewidget.h"
+#include "spacewarwidget.h"
 
 GameTestRunner::GameTestRunner(int argc, char* argv[])
 {
@@ -51,7 +58,7 @@ bool GameTestRunner::loadConfig()
     return !m_letters.isEmpty();
 }
 
-static QChar makeWrong(QChar c)
+static QChar MakeWrong(QChar c)
 {
     QChar u = c.toUpper();
     return (u == 'Z') ? 'A' : QChar(u.unicode() + 1);
@@ -84,7 +91,7 @@ RoundResult GameTestRunner::runRound(const QString& mode, const QString& letters
     result.expectedWrong = expectedWrong;
 
     if (m_gameName == "apple") {
-        AppleGameWidget* widget = new AppleGameWidget();
+        auto widget = std::make_unique<AppleGameWidget>();
         widget->resize(800, 600);
         widget->setTestMode(true);
         widget->setTestLetters(letters);
@@ -99,9 +106,9 @@ RoundResult GameTestRunner::runRound(const QString& mode, const QString& letters
             QChar c = letters.at(i).toUpper();
             if (!c.isLetter()) continue;
 
-            QChar typeChar = correctMask[i] ? c : makeWrong(c);
+            QChar typeChar = correctMask[i] ? c : MakeWrong(c);
             QKeyEvent ke(QEvent::KeyPress, 0, Qt::NoModifier, QString(typeChar));
-            QApplication::sendEvent(widget, &ke);
+            QApplication::sendEvent(widget.get(), &ke);
             QApplication::processEvents();
             QTest::qWait(150);
         }
@@ -116,7 +123,7 @@ RoundResult GameTestRunner::runRound(const QString& mode, const QString& letters
         if (mode == "AllCorrect") result.passed = (actualCorrect == expectedCorrect);
         else if (mode == "AllWrong") result.passed = (actualCorrect == 0);
         else {
-            double r = (expectedCorrect > 0) ? qAbs(actualCorrect - expectedCorrect) / (double)expectedCorrect : 1.0;
+            double r = (expectedCorrect > 0) ? qAbs(actualCorrect - expectedCorrect) / static_cast<double>(expectedCorrect) : 1.0;
             result.passed = (r <= 0.05);
         }
 
@@ -131,9 +138,8 @@ RoundResult GameTestRunner::runRound(const QString& mode, const QString& letters
 
         widget->stopGame();
         widget->close();
-        delete widget;
     } else {
-        SpaceWarWidget* widget = new SpaceWarWidget();
+        auto widget = std::make_unique<SpaceWarWidget>();
         widget->resize(800, 600);
         widget->setTestMode(true);
         widget->skipSounds();
@@ -152,7 +158,7 @@ RoundResult GameTestRunner::runRound(const QString& mode, const QString& letters
         QApplication::processEvents();
         QTest::qWait(200);
 
-        QMetaObject::invokeMethod(widget, "onStartClicked", Qt::DirectConnection);
+        QMetaObject::invokeMethod(widget.get(), "onStartClicked", Qt::DirectConnection);
         QApplication::processEvents();
         QTest::qWait(300);
 
@@ -161,9 +167,9 @@ RoundResult GameTestRunner::runRound(const QString& mode, const QString& letters
             QChar c = letters.at(i).toUpper();
             if (!c.isLetter()) continue;
 
-            QChar typeChar = correctMask[i] ? c : makeWrong(c);
+            QChar typeChar = correctMask[i] ? c : MakeWrong(c);
             QKeyEvent ke(QEvent::KeyPress, 0, Qt::NoModifier, QString(typeChar));
-            QApplication::sendEvent(widget, &ke);
+            QApplication::sendEvent(widget.get(), &ke);
             QApplication::processEvents();
             QTest::qWait(60 + (correctMask[i] ? 120 : 0));
         }
@@ -186,13 +192,12 @@ RoundResult GameTestRunner::runRound(const QString& mode, const QString& letters
         if (mode == "AllCorrect") result.passed = (actualCorrect == expectedCorrect);
         else if (mode == "AllWrong") result.passed = (actualCorrect == 0);
         else {
-            double r = (expectedCorrect > 0) ? qAbs(actualCorrect - expectedCorrect) / (double)expectedCorrect : 1.0;
+            double r = (expectedCorrect > 0) ? qAbs(actualCorrect - expectedCorrect) / static_cast<double>(expectedCorrect) : 1.0;
             result.passed = (r <= 0.05);
         }
 
-        QMetaObject::invokeMethod(widget, "stopGame", Qt::DirectConnection);
+        QMetaObject::invokeMethod(widget.get(), "stopGame", Qt::DirectConnection);
         widget->close();
-        delete widget;
     }
 
     return result;

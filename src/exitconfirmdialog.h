@@ -1,5 +1,10 @@
-#ifndef EXITCONFIRMDIALOG_H
-#define EXITCONFIRMDIALOG_H
+// filename: exitconfirmdialog.h
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Exit confirmation dialog with custom background and buttons
+
+#ifndef _TYPEGAME_EXITCONFIRMDIALOG_H_
+#define _TYPEGAME_EXITCONFIRMDIALOG_H_
 
 #include <QDialog>
 #include <QPushButton>
@@ -11,8 +16,8 @@ class ExitConfirmDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ExitConfirmDialog(QWidget* parent, QString back_url, QString left_url, QString right_url, QString text);
-    explicit ExitConfirmDialog(QWidget* parent, QString back_url, QString left_url, QString min_url, QString right_url, QString text);
+    explicit ExitConfirmDialog(QWidget* parent, const QString& back_url, const QString& left_url, const QString& right_url, const QString& text);
+    explicit ExitConfirmDialog(QWidget* parent, const QString& back_url, const QString& left_url, const QString& min_url, const QString& right_url, const QString& text);
     ~ExitConfirmDialog();
 
     bool isConfirmed() const { return m_confirmed; }
@@ -30,4 +35,4 @@ private:
     QSoundEffect* m_clickSoundEffect;
 };
 
-#endif
+#endif // _TYPEGAME_EXITCONFIRMDIALOG_H_

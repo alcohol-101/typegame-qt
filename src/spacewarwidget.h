@@ -1,5 +1,10 @@
-#ifndef SPACEWARWIDGET_H
-#define SPACEWARWIDGET_H
+// filename: spacewarwidget.h
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Space war typing game widget with LLM word generation
+
+#ifndef _TYPEGAME_SPACEWARWIDGET_H_
+#define _TYPEGAME_SPACEWARWIDGET_H_
 
 #include <QWidget>
 #include <QTimer>
@@ -44,7 +49,6 @@ struct GameObject {
     double oscAmplitude = 32.0;  // 振幅
     double oscOmega = 3.0;       // 角频率
 
-    
     double cylinderAngle = 0.0;
 
     double fallSpeed = 2.0;
@@ -226,4 +230,4 @@ private:
     int m_missedCount = 0;
 };
 
-#endif // SPACEWARWIDGET_H
+#endif // _TYPEGAME_SPACEWARWIDGET_H_

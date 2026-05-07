@@ -1,24 +1,29 @@
+// filename: nameinputdialog.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Implementation of NameInputDialog
+
 #include "nameinputdialog.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPainter>
 
-NameInputDialog::NameInputDialog(QWidget *parent)
+NameInputDialog::NameInputDialog(QWidget* parent)
     : QDialog(parent)
 {
     setWindowFlags(Qt::Dialog);
     
     setFixedSize(400,200);
     setWindowTitle(tr("高分英雄"));
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    QHBoxLayout* layout_1 = new QHBoxLayout();
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    QHBoxLayout* layout1 = new QHBoxLayout();
     layout->setContentsMargins(30, 30, 30, 30);
-    QLabel *label = new QLabel(tr("请输入你的名字:"), this);
+    QLabel* label = new QLabel(tr("请输入你的名字:"), this);
     label->setStyleSheet("color: black; font-size: 18px; background: transparent;");
-    layout_1->addWidget(label);
+    layout1->addWidget(label);
 
-    QVBoxLayout *btnLayout = new QVBoxLayout;
+    QVBoxLayout* btnLayout = new QVBoxLayout;
     m_okBtn = new QPushButton(tr("确定"),this);
     m_okBtn->setFixedSize(92,46);
     
@@ -29,12 +34,12 @@ NameInputDialog::NameInputDialog(QWidget *parent)
     btnLayout->addWidget(m_okBtn);
     btnLayout->addWidget(m_cancelBtn);
     btnLayout->addStretch();
-    layout_1->addLayout(btnLayout);
+    layout1->addLayout(btnLayout);
 
     m_lineEdit = new QLineEdit(this);
     m_lineEdit->setStyleSheet("background: white; font-size: 18px;");
 
-    layout->addLayout(layout_1);
+    layout->addLayout(layout1);
     layout->addWidget(m_lineEdit);
     layout->addStretch();
 
@@ -47,7 +52,7 @@ QString NameInputDialog::name() const
     return m_lineEdit->text().trimmed();
 }
 
-void NameInputDialog::paintEvent(QPaintEvent *event)
+void NameInputDialog::paintEvent(QPaintEvent* event)
 {
     Q_UNUSED(event);
     QPainter painter(this);

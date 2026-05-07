@@ -1,8 +1,12 @@
+// filename: applegamewidget.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Implementation of AppleGameWidget game logic and rendering
+
 #include "applegamewidget.h"
 
 #include "settingsdialog.h"
 #include "exitconfirmdialog.h"
-
 
 constexpr double APPLE_WIDTH_RATIO = 200.0 / 2560.0;
 constexpr double APPLE_HEIGHT_RATIO = 200.0 / 1440.0;
@@ -54,16 +58,18 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
     resize(sg.width() * 0.8, sg.height() * 0.8);
     move((sg.width() - width()) / 2, (sg.height() - height()) / 2);
 
+    QRect fullGeometry = sc->geometry();
+    double wPrimary = fullGeometry.width();
+    double hPrimary = fullGeometry.height();
+
     m_normalApplePixmap.load(":/res/image/Apple/Images/APPLE_NORMAL.png");
     m_badApplePixmap.load(":/res/image/Apple/Images/APPLE_BAD.png");
     m_basketPixmap.load(":/res/image/Apple/Images/APPLE_BASKET.png");
     m_smallApplePixmap.load(":/res/image/Apple/Images/APPLE_SMALL.png");
     m_backgroundPixmap.load(":/res/image/Apple/Images/APPLE_BACKGROUND.png");
 
-   
-
-    m_appleSize = QSize(APPLE_WIDTH_RATIO * w_primary, APPLE_HEIGHT_RATIO * h_primary);
-    m_smallAppleSize = QSize(SMALL_APPLE_WIDTH_RATIO * w_primary, SMALL_APPLE_HEIGHT_RATIO * h_primary);
+    m_appleSize = QSize(APPLE_WIDTH_RATIO* wPrimary, APPLE_HEIGHT_RATIO* hPrimary);
+    m_smallAppleSize = QSize(SMALL_APPLE_WIDTH_RATIO* wPrimary, SMALL_APPLE_HEIGHT_RATIO* hPrimary);
 
     QWidget* controlWidget = new QWidget(this);
     controlWidget->setStyleSheet("background-color: rgba(0,0,0,0);");
@@ -72,7 +78,7 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
     controlLayout->setSpacing(15);
 
     m_exitBtn = new QPushButton(controlWidget);
-    m_exitBtn->setFixedSize(EXIT_BTN_WIDTH_RATIO * w_primary, EXIT_BTN_HEIGHT_RATIO * h_primary);
+    m_exitBtn->setFixedSize(EXIT_BTN_WIDTH_RATIO* wPrimary, EXIT_BTN_HEIGHT_RATIO* hPrimary);
     m_exitBtn->setStyleSheet(
         "QPushButton {"
         "   border-image: url(:/res/image/Common/Images/PUBLIC_EXIT.png)0 188 0 0;"
@@ -93,7 +99,6 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
 
     int w_window = QApplication::primaryScreen()->geometry().width();
     int h_window = QApplication::primaryScreen()->geometry().height();
-
 
     m_startBtn->setStyleSheet(R"(
         QPushButton {
@@ -132,8 +137,6 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
         }
     )");
 
-
-
     controlLayout->addWidget(m_exitBtn, 0, Qt::AlignLeft | Qt::AlignBottom);
 
     controlLayout->addStretch();
@@ -153,7 +156,6 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
 
     m_pauseBtn->setEnabled(false);
     m_stopBtn->setEnabled(false);
-
 
     m_bgmPlayer = new QMediaPlayer(this);
     m_bgmPlayer->setMedia(QUrl("qrc:/res/image/Apple/Sounds/APPLE_BG.mp3"));
@@ -566,6 +568,17 @@ void AppleGameWidget::checkGameOver()
     }
 }
 
+int AppleGameWidget::activeAppleCount() const
+{
+    int count = 0;
+    for (const Apple& a : m_apples) {
+        if (!a.isBad) {
+            ++count;
+        }
+    }
+    return count;
+}
+
 void AppleGameWidget::paintEvent(QPaintEvent* event)
 {
     Q_UNUSED(event);
@@ -608,9 +621,9 @@ void AppleGameWidget::drawApples(QPainter& painter)
 
 void AppleGameWidget::drawBasketAndSmallApples(QPainter& painter)
 {
-    int basketWidth = BASKET_WIDTH_RATIO * width();
-    int basketHeight = BASKET_HEIGHT_RATIO * height();
-    int margin = BASKET_MARGIN_RATIO * width();
+    int basketWidth = BASKET_WIDTH_RATIO* width();
+    int basketHeight = BASKET_HEIGHT_RATIO* height();
+    int margin = BASKET_MARGIN_RATIO* width();
     m_basketPos = QPoint(width() - basketWidth - margin, height() - basketHeight - margin - 60);
 
     painter.drawPixmap(QRect(m_basketPos, QSize(basketWidth, basketHeight)), m_basketPixmap);
@@ -649,8 +662,6 @@ void AppleGameWidget::drawBasketAndSmallApples(QPainter& painter)
     int topX3 = bottomX3;
 
     auto getDrawX = [smallW](int centerX) { return centerX - smallW / 2; };
-
-    int drawn = 0;
 
     struct ApplePosition {
         int centerX;
@@ -709,9 +720,9 @@ void AppleGameWidget::resizeEvent(QResizeEvent* event)
     int w = width();
     int h = height();
 
-    m_appleSize = QSize(APPLE_WIDTH_RATIO * w, APPLE_HEIGHT_RATIO * h);
-    m_smallAppleSize = QSize(SMALL_APPLE_WIDTH_RATIO * w, SMALL_APPLE_HEIGHT_RATIO * h);
-    m_exitBtn->setFixedSize(EXIT_BTN_WIDTH_RATIO * w, EXIT_BTN_HEIGHT_RATIO * h);
+    m_appleSize = QSize(APPLE_WIDTH_RATIO* w, APPLE_HEIGHT_RATIO* h);
+    m_smallAppleSize = QSize(SMALL_APPLE_WIDTH_RATIO* w, SMALL_APPLE_HEIGHT_RATIO* h);
+    m_exitBtn->setFixedSize(EXIT_BTN_WIDTH_RATIO* w, EXIT_BTN_HEIGHT_RATIO* h);
 
     int size_up = w * 0.0508;     // 或 h * 0.0903
     int size_right = w * 0.0586;  // 或 h * 0.1042

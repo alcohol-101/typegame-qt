@@ -1,5 +1,10 @@
-#ifndef HIGHSCOREDIALOG_H
-#define HIGHSCOREDIALOG_H
+// filename: highscoredialog.h
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: High score display dialog with file persistence
+
+#ifndef _TYPEGAME_HIGHSCOREDIALOG_H_
+#define _TYPEGAME_HIGHSCOREDIALOG_H_
 
 #include <QDialog>
 #include <QVector>
@@ -33,4 +38,4 @@ private:
     TriStateButton* m_returnBtn;
 };
 
-#endif // HIGHSCOREDIALOG_H
+#endif // _TYPEGAME_HIGHSCOREDIALOG_H_

@@ -1,5 +1,10 @@
-#ifndef GAMETESTRUNNER_H
-#define GAMETESTRUNNER_H
+// filename: gametestrunner.h
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-05
+// description: CLI-based automated game test runner (JSON-driven)
+
+#ifndef _TYPEGAME_GAMETESTRUNNER_H_
+#define _TYPEGAME_GAMETESTRUNNER_H_
 
 #include <QString>
 #include <QJsonObject>
@@ -37,4 +42,4 @@ private:
     void saveResults(const QJsonArray& rounds);
 };
 
-#endif
+#endif // _TYPEGAME_GAMETESTRUNNER_H_

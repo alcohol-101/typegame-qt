@@ -1,3 +1,8 @@
+// filename: tst_spacelogic.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-05-06
+// description: Unit tests for SpaceWarWidget game logic
+
 #include <QtTest>
 #include <QSet>
 #include <QVector>
@@ -7,6 +12,8 @@
 class TestSpaceLogic : public QObject
 {
     Q_OBJECT
+
+public:
 
 private:
     QSet<QChar> m_usedLetters;

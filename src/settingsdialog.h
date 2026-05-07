@@ -1,5 +1,10 @@
-#ifndef SETTINGSDIALOG_H
-#define SETTINGSDIALOG_H
+// filename: settingsdialog.h
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Apple game settings dialog (speed, targets, audio)
+
+#ifndef _TYPEGAME_SETTINGSDIALOG_H_
+#define _TYPEGAME_SETTINGSDIALOG_H_
 
 #include <QDialog>
 #include <QSlider>
@@ -45,9 +50,9 @@ private:
 
     QCheckBox* m_soundCheckBox;
 
-    QPushButton* okBtn;
-    QPushButton* cancelBtn;
-    QPushButton* defaultBtn;
+    QPushButton* m_okBtn;
+    QPushButton* m_cancelBtn;
+    QPushButton* m_defaultBtn;
 
     int m_originalLevel;
     int m_originalTarget;
@@ -62,4 +67,4 @@ private:
     void setupUi();
 };
 
-#endif // SETTINGSDIALOG_H
+#endif // _TYPEGAME_SETTINGSDIALOG_H_

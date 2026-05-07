@@ -1,3 +1,8 @@
+// filename: tst_nameinputdialog.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-05-05
+// description: Unit tests for NameInputDialog
+
 #include <QtTest>
 #include <QApplication>
 #include <QLineEdit>
@@ -6,6 +11,8 @@
 class TestNameInputDialog : public QObject
 {
     Q_OBJECT
+
+public:
 
 private slots:
     void testConstructor();

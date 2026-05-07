@@ -1,5 +1,10 @@
-#ifndef SPACESETTINGSDIALOG_H
-#define SPACESETTINGSDIALOG_H
+// filename: spacesettingsdialog.h
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Space game settings dialog (enemies, speed, rewards)
+
+#ifndef _TYPEGAME_SPACESETTINGSDIALOG_H_
+#define _TYPEGAME_SPACESETTINGSDIALOG_H_
 
 #include <QDialog>
 #include <QSlider>
@@ -12,15 +17,15 @@ class SpaceSettingsDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit SpaceSettingsDialog(QWidget *parent = nullptr);
+    explicit SpaceSettingsDialog(QWidget* parent = nullptr);
     void setCurrentValues(int enemyMax, int speed, int upgradeIntervalSec, bool rewardOn);
 
 signals:
     void settingsApplied(int enemyMax, int speed, int upgradeIntervalSec, bool rewardOn);
 
 protected:
-    void resizeEvent(QResizeEvent *event) override;
-    bool eventFilter(QObject *obj, QEvent *event) override;
+    void resizeEvent(QResizeEvent* event) override;
+    bool eventFilter(QObject* obj, QEvent* event) override;
 
 private slots:
     void onOkClicked();
@@ -32,24 +37,24 @@ private slots:
     void onRewardToggled(bool checked);
 
 private:
-    QSlider *m_enemyMaxSlider;
-    QSlider *m_speedSlider;
-    QSlider *m_upgradeIntervalSlider;
-    QLabel *m_enemyMaxLabel;
-    QLabel *m_speedLabel;
-    QLabel *m_upgradeIntervalLabel;
-    QCheckBox *m_rewardCheckBox;
+    QSlider* m_enemyMaxSlider;
+    QSlider* m_speedSlider;
+    QSlider* m_upgradeIntervalSlider;
+    QLabel* m_enemyMaxLabel;
+    QLabel* m_speedLabel;
+    QLabel* m_upgradeIntervalLabel;
+    QCheckBox* m_rewardCheckBox;
 
-    QPushButton *okBtn, *cancelBtn, *defaultBtn;
+    QPushButton* m_okBtn, *m_cancelBtn, *m_defaultBtn;
 
     int m_originalEnemyMax, m_originalSpeed, m_originalUpgradeInterval;
     bool m_originalRewardOn;
     bool m_valuesChanged;
 
-    QSoundEffect *m_hoverSoundEffect;
-    QSoundEffect *m_clickSoundEffect;
+    QSoundEffect* m_hoverSoundEffect;
+    QSoundEffect* m_clickSoundEffect;
 
     void setupUi();
 };
 
-#endif // SPACESETTINGSDIALOG_H
+#endif // _TYPEGAME_SPACESETTINGSDIALOG_H_

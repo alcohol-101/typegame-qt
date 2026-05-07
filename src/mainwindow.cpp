@@ -1,5 +1,9 @@
-﻿#include "mainwindow.h"
+// filename: mainwindow.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Implementation of MainWindow
 
+#include "mainwindow.h"
 
 #include<QLayout>
 #include<QLabel>
@@ -16,35 +20,35 @@
 #include "spacewarwidget.h"
 #include "respath.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(nullptr)
     
 {
     QScreen* screen = QApplication::primaryScreen();
     QRect fullGeometry = screen->geometry();
-    double w_primary = fullGeometry.width();
-    double h_primary = fullGeometry.height();
-    this->resize(w_primary * 147.0 / 256.0, h_primary * 1045.0 / 1440.0);
+    double wPrimary = fullGeometry.width();
+    double hPrimary = fullGeometry.height();
+    this->resize(wPrimary * 147.0 / 256.0, hPrimary * 1045.0 / 1440.0);
 
     setWindowFlags(Qt::FramelessWindowHint);
-    QWidget *centralContainer = new QWidget(this);
-    QVBoxLayout *mainLayout = new QVBoxLayout(centralContainer);
+    QWidget* centralContainer = new QWidget(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout(centralContainer);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
     centralContainer->setStyleSheet(R"(border-radius: 5px;)");
 
-    titleBar = new QWidget();
-    titleBar->setObjectName("titleBar");
-    titleBar->setStyleSheet("QWidget#titleBar { background-color: #58a2ff; }");
-    titleBar->setFixedHeight(this->height()*0.14832);
+    m_titleBar = new QWidget();
+    m_titleBar->setObjectName("titleBar");
+    m_titleBar->setStyleSheet("QWidget#titleBar { background-color: #58a2ff; }");
+    m_titleBar->setFixedHeight(this->height()*0.14832);
 
-    QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);
+    QHBoxLayout* titleLayout = new QHBoxLayout(m_titleBar);
     titleLayout->setContentsMargins(0, 0, 0, 0);
     titleLayout->setSpacing(10);
 
-    QLabel *iconLabel = new QLabel(titleBar);
+    QLabel* iconLabel = new QLabel(m_titleBar);
     QPixmap pixmap(":/res/image/title_left.png");
     if (!pixmap.isNull()) {
         iconLabel->setPixmap(pixmap);
@@ -54,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
     titleLayout->addWidget(iconLabel);
 
-    QLabel *titleLabel = new QLabel( titleBar);
+    QLabel* titleLabel = new QLabel( m_titleBar);
     QFont titleFont = titleLabel->font();
     titleFont.setPointSize(50);
     titleLabel->setFont(titleFont);
@@ -63,39 +67,38 @@ MainWindow::MainWindow(QWidget *parent)
 
     titleLayout->addStretch();
 
-
-    QPushButton *minimizeBtn = new QPushButton(QChar(0x2014), titleBar);
+    QPushButton* minimizeBtn = new QPushButton(QChar(0x2014), m_titleBar);
     minimizeBtn->setFixedSize(40, 30);
     minimizeBtn->setStyleSheet(
         "QPushButton { background-color: transparent; color: white; font-size: 25px; border: none;font-weight: bold; }"
         "QPushButton:hover { background-color: #d9e7ff; }"
         );
 
-    QPushButton *maximizeBtn = new QPushButton(QChar(0x25A1),titleBar);
+    QPushButton* maximizeBtn = new QPushButton(QChar(0x25A1),m_titleBar);
     maximizeBtn->setFixedSize(40,30);
     maximizeBtn->setStyleSheet(
         "QPushButton { background-color: transparent; color: white; font-size:25px; border: none; font-weight: bold; }"
         "QPushButton:hover { background-color: #d9e7ff;  }"
         );
 
-    QPushButton *closeBtn = new QPushButton(QChar(0x00D7), titleBar);
+    QPushButton* closeBtn = new QPushButton(QChar(0x00D7), m_titleBar);
     closeBtn->setFixedSize(50, 30);
     closeBtn->setStyleSheet(
         "QPushButton { background-color: transparent; color: white; font-size:25px; border: none; font-weight: bold;}"
         "QPushButton:hover { background-color: #e74c3c; }"
         );
 
-    QVBoxLayout *three_v=new QVBoxLayout();
-    QHBoxLayout *three_h=new QHBoxLayout();
+    QVBoxLayout* threeV=new QVBoxLayout();
+    QHBoxLayout* threeH=new QHBoxLayout();
 
 
-    three_h->addWidget(minimizeBtn);
-    three_h->addWidget(maximizeBtn);
-    three_h->addWidget(closeBtn);
-    three_v->addLayout(three_h);
-    three_v->addStretch();
+    threeH->addWidget(minimizeBtn);
+    threeH->addWidget(maximizeBtn);
+    threeH->addWidget(closeBtn);
+    threeV->addLayout(threeH);
+    threeV->addStretch();
 
-    titleLayout->addLayout(three_v);
+    titleLayout->addLayout(threeV);
 
     connect(closeBtn, &QPushButton::clicked, []() {
              exit(0); 
@@ -111,7 +114,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    mainLayout->addWidget(titleBar, 14.84);
+    mainLayout->addWidget(m_titleBar, 14.84);
     setCentralWidget(centralContainer);
     QTimer::singleShot(0, this, &MainWindow::setupContent);
 }
@@ -120,15 +123,15 @@ void MainWindow::setupContent()
 {
     QScreen* screen = QApplication::primaryScreen();
     QRect fullGeometry = screen->geometry();
-    double w_primary = fullGeometry.width();
-    double h_primary = fullGeometry.height();
+    double wPrimary = fullGeometry.width();
+    double hPrimary = fullGeometry.height();
 
     QWidget* cw = centralWidget();
     QVBoxLayout* mainLayout = qobject_cast<QVBoxLayout*>(cw->layout());
 
-    QWidget *contentArea = new QWidget();
+    QWidget* contentArea = new QWidget();
     contentArea->setStyleSheet("QWidget { background-color: #edf7ff; }");
-    QVBoxLayout *contentLayout = new QVBoxLayout(contentArea);
+    QVBoxLayout* contentLayout = new QVBoxLayout(contentArea);
     contentLayout->setContentsMargins(0,0,0,0);
     int height_content=100;
     contentLayout->addStretch(12);
@@ -141,28 +144,27 @@ void MainWindow::setupContent()
     gameLabel->setFont(font);
     contentLayout->addWidget(gameLabel,5);
 
-
     QHBoxLayout* layout = new QHBoxLayout();
 
     QString photo(":/res/image/live.png");
     ButtonWithText* btn1 = new ButtonWithText(photo, tr("生死时速"));
-    btn1->setButtonSize(250.0/2560.0*w_primary,270.0/1440.0*h_primary);
+    btn1->setButtonSize(250.0/2560.0*wPrimary,270.0/1440.0*hPrimary);
 
     photo=":/res/image/mouse.png";
     ButtonWithText* btn2 = new ButtonWithText(photo, tr("鼠的故事"));
-    btn2->setButtonSize(250.0 / 2560.0 * w_primary, 270.0 / 1440.0 * h_primary);
+    btn2->setButtonSize(250.0 / 2560.0 * wPrimary, 270.0 / 1440.0 * hPrimary);
 
     photo=":/res/image/apple.png";
     ButtonWithText* btn3 = new ButtonWithText(photo, tr("拯救苹果"));
-    btn3->setButtonSize(250.0 / 2560.0 * w_primary, 270.0 / 1440.0 * h_primary);
+    btn3->setButtonSize(250.0 / 2560.0 * wPrimary, 270.0 / 1440.0 * hPrimary);
 
     photo=":/res/image/space.png";
     ButtonWithText* btn4 = new ButtonWithText(photo, tr("太空大战"));
-    btn4->setButtonSize(250.0 / 2560.0 * w_primary, 270.0 / 1440.0 * h_primary);
+    btn4->setButtonSize(250.0 / 2560.0 * wPrimary, 270.0 / 1440.0 * hPrimary);
 
     photo=":/res/image/water.png";
     ButtonWithText* btn5 = new ButtonWithText(photo, tr("激流勇进"));
-    btn5->setButtonSize(250.0 / 2560.0 * w_primary, 270.0 / 1440.0 * h_primary);
+    btn5->setButtonSize(250.0 / 2560.0 * wPrimary, 270.0 / 1440.0 * hPrimary);
 
     QObject::connect(btn1, &QPushButton::clicked, []() {
         qDebug() << "生死时速被点击！";
@@ -174,7 +176,7 @@ void MainWindow::setupContent()
 
     QObject::connect(btn3, &QPushButton::clicked, [this]() {
         qDebug() << "拯救苹果被点击！";
-        if (!ensureGameResources())
+        if (!EnsureGameResources())
             return;
         AppleGameWidget* gameWidget = new AppleGameWidget();
         gameWidget->show();
@@ -185,7 +187,7 @@ void MainWindow::setupContent()
 
     QObject::connect(btn4, &QPushButton::clicked, [this]() {
         qDebug() << "太空大战被点击！";
-        if (!ensureGameResources())
+        if (!EnsureGameResources())
             return;
         SpaceWarWidget* gameWidget = new SpaceWarWidget();
         gameWidget->show();
@@ -222,12 +224,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::mousePressEvent(QMouseEvent *event)
+void MainWindow::mousePressEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton) {
-        QPoint localPos = titleBar->mapFromParent(event->pos());
+        QPoint localPos = m_titleBar->mapFromParent(event->pos());
 
-        if (titleBar->rect().contains(localPos)) {
+        if (m_titleBar->rect().contains(localPos)) {
             m_dragPosition = event->globalPos() - frameGeometry().topLeft();
             m_bDrag = true;
             event->accept();
@@ -235,7 +237,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void MainWindow::mouseMoveEvent(QMouseEvent *event)
+void MainWindow::mouseMoveEvent(QMouseEvent* event)
 {
     if ((event->buttons() & Qt::LeftButton) && m_bDrag) {
         move(event->globalPos() - m_dragPosition);
@@ -243,7 +245,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton) {
         m_bDrag = false;

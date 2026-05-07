@@ -1,11 +1,18 @@
+// filename: highscoredialog.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Implementation of HighScoreDialog
+
 #include "highscoredialog.h"
-#include "tristatebutton.h"
+
 #include <QFile>
 #include <QTextStream>
 #include <QPainter>
 #include <QApplication>
 #include <QScreen>
 #include <QDebug>
+
+#include "tristatebutton.h"
 
 constexpr int MAX_DISPLAY_SCORES = 9;
 constexpr double SCORE_X_RATIO = 250.0 / 800.0;
@@ -14,9 +21,9 @@ constexpr double SCORE_Y_STEP_RATIO = 36.0 / 600.0;
 constexpr double SCORE_ITEM_WIDTH_RATIO = 345.0 / 800.0;
 constexpr double SCORE_ITEM_HEIGHT_RATIO = 33.0 / 600.0;
 
-
 HighScoreDialog::HighScoreDialog(const QString& scoreFilePath, QWidget* parent)
-    : QDialog(parent), m_filePath(scoreFilePath)
+    : QDialog(parent)
+    , m_filePath(scoreFilePath)
 {
     setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -124,7 +131,7 @@ void HighScoreDialog::paintEvent(QPaintEvent* event)
 
     for (int i = 0; i < MAX_DISPLAY_SCORES; ++i) {
         int x = w * SCORE_X_RATIO;
-        int y = h * (SCORE_Y_BASE_RATIO + SCORE_Y_STEP_RATIO * i);
+        int y = h * (SCORE_Y_BASE_RATIO + SCORE_Y_STEP_RATIO* i);
         int itemWidth = w * SCORE_ITEM_WIDTH_RATIO;
         int itemHeight = h * SCORE_ITEM_HEIGHT_RATIO;
 

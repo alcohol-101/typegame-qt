@@ -1,18 +1,24 @@
+// filename: spacewarwidget.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Implementation of SpaceWarWidget game logic, AI, and rendering
+
 #include "spacewarwidget.h"
 
-#include <QPainter>
-#include <QKeyEvent>
-#include <QVBoxLayout>
-#include <QApplication>
-#include <QScreen>
-#include <QTimer>
 #include <cmath>
-#include <QDir>
-#include <QFile>
-#include <QTextStream>
-#include <QRandomGenerator>
-#include <QElapsedTimer> 
+
+#include <QApplication>
 #include <QDebug>
+#include <QDir>
+#include <QElapsedTimer>
+#include <QFile>
+#include <QKeyEvent>
+#include <QPainter>
+#include <QRandomGenerator>
+#include <QScreen>
+#include <QTextStream>
+#include <QTimer>
+#include <QVBoxLayout>
 
 #include "tristatebutton.h"
 #include "spacesettingsdialog.h"
@@ -23,8 +29,8 @@
 
 constexpr double PI = 3.14159265358979323846;
 
-constexpr double bulletSpeed = 40.0;
-constexpr double turnRate = 0.2;
+constexpr double BULLET_SPEED = 40.0;
+constexpr double TURN_RATE = 0.2;
 constexpr double SPAWN_BASE_SPEED = 2.0;
 constexpr double SPAWN_SPEED_MULTIPLIER = 1.0;
 constexpr double METEORITE_BASE_SPEED = 2.0;
@@ -36,9 +42,9 @@ constexpr int MAX_REWARD_WORDS = 1;
 constexpr double DEFAULT_REWARD_WORD_SPEED = 15.0;
 constexpr int GAME_OVER_DELAY_MS = 500;
 
-// LLM API 配置（替换为你的 DeepSeek API Key）
+// LLM API configuration
 static const QString LLM_API_URL = "https://api.deepseek.com/chat/completions";
-static const QString LLM_API_KEY = "REVOKED-KEY-SET-DEEPSEEK_API_KEY-ENV-VAR";
+static const QString LLM_API_KEY = qEnvironmentVariable("DEEPSEEK_API_KEY", "REVOKED-KEY-SET-DEEPSEEK_API_KEY-ENV-VAR");
 static const QString LLM_API_MODEL = "deepseek-chat";
 static const QString LLM_PROMPT = "生成一个与计算机领域相关的英文单词，只返回单词本身，不要有任何额外文字或标点符号。";
 static const int LLM_MAX_TOKENS = 20;
@@ -56,8 +62,6 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     resize(sg.width() * 0.8, sg.height() * 0.8);
     move((sg.width() - width()) / 2, (sg.height() - height()) / 2);
 
-
-
     m_playerPixmap.load(":/res/image/Space/Images/SPACE_SHIP.png");
     m_meteoritePixmap.load(":/res/image/Space/Images/SPACE_ENEMY_4.png");
     m_enemyPixmap.load(":/res/image/Space/Images/SPACE_ENEMY_0.png");
@@ -72,7 +76,6 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
 
     m_mainMenuBackground.load(":/res/image/Space/Images/SPACE_MAINMENU_BG.png");
     m_gameBackground.load(":/res/image/Space/Images/SPACE_BACKGROUND.png");
-
 
     m_startBtn = new TriStateButton(":/res/image/Space/Images/SPACE_START.png", this);
     m_highScoreBtn = new TriStateButton(":/res/image/Space/Images/SPACE_HISCORE.png", this);
@@ -106,7 +109,6 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     m_gameTimer->setInterval(30);
     connect(m_gameTimer, &QTimer::timeout, this, &SpaceWarWidget::gameLoop);
 
-
     m_upgradeTimer = new QTimer(this);
     m_upgradeTimer->setInterval(1000);
     connect(m_upgradeTimer, &QTimer::timeout, this, [this]() {
@@ -124,11 +126,9 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     connect(m_explosionCheckTimer, &QTimer::timeout, this, &SpaceWarWidget::onExplosionFrame);
     m_explosionCheckTimer->start();
 
-
     m_wordSpawnTimer = new QTimer(this);
     m_wordSpawnTimer->setInterval(10000);
     connect(m_wordSpawnTimer, &QTimer::timeout, this, &SpaceWarWidget::onWordSpawnTimer);
-
 
     m_playerAnimTimer = new QTimer(this);
     m_playerAnimTimer->setInterval(100);
@@ -136,7 +136,6 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
         if (m_gameActive && !m_gamePaused)
             m_playerFrame = (m_playerFrame + 1) % 11;
         });
-
 
     m_bgmPlayer = new QMediaPlayer(this);
     m_bgmPlayer->setMedia(QUrl("qrc:/res/image/Space/Sounds/SPACE_BG.mp3"));
@@ -147,7 +146,6 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
         }
         });
 
-
     m_shootSound = new QSoundEffect(this);
     m_shootSound->setSource(QUrl("qrc:/res/image/Space/Sounds/SPACE_SHOOT.wav"));
     m_explosionSound = new QSoundEffect(this);
@@ -157,8 +155,7 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     m_bonusSound = new QSoundEffect(this);
     m_bonusSound->setSource(QUrl("qrc:/res/image/Space/Sounds/SPACE_WORDOUT.wav"));
 
-
-    m_scoreFilePath = resPath("data/space_highscores.txt");
+    m_scoreFilePath = ResPath("data/space_highscores.txt");
 
     // 初始位置将在 resizeEvent 中设置
     m_playerPos = QPointF(width() / 2.0, height() * 0.85);
@@ -255,7 +252,6 @@ void SpaceWarWidget::drawHUD(QPainter& p) {
     QColor bgColor(0, 0, 0, 150);
     p.fillRect(0, 0, w, barHeight, bgColor);
 
-
     int iconS = barHeight * 0.55;
     int topY = (barHeight - iconS) / 2;
 
@@ -263,15 +259,11 @@ void SpaceWarWidget::drawHUD(QPainter& p) {
     p.setFont(f);
     p.setPen(Qt::white);
 
-
     int sectionW = w / 3;
-
 
     int scoreIconX = sectionW / 12;  // 图标在左边
     p.drawPixmap(scoreIconX, topY, 2*iconS, iconS, m_scoreIcon);
     p.drawText(scoreIconX + 2*iconS + 10, topY + iconS * 0.8, QString("%1").arg(m_score));
-
-
     
     int heartIconX = w/3 + iconS;
     p.drawPixmap(heartIconX, topY, 2*iconS, iconS, m_heartIcon);
@@ -284,15 +276,13 @@ void SpaceWarWidget::drawHUD(QPainter& p) {
 
     p.drawPixmap(barX, barY, barW, barH, m_lifeIcon);
     p.drawRect(barX, barY, barW, barH);
-    double ratio = (double)m_lives / m_maxLives;
+    double ratio = static_cast<double>(m_lives) / m_maxLives;
     p.fillRect(barX + 1, barY + 1, (barW - 2) * ratio, barH - 2, Qt::green);
-
 
     int timeIconX = w - sectionW / 2 - iconS * 3;
     p.drawPixmap(timeIconX, topY, iconS*2, iconS, m_timeIcon);
     int secs = m_upgradeTimerCount / 1000;
     p.drawText(timeIconX + iconS*2 + 5, topY + iconS * 0.8, QString(" %1 s").arg(secs));
-
 
     if (m_upgradedFlag) {
         p.setPen(Qt::blue);
@@ -322,12 +312,10 @@ void SpaceWarWidget::drawObjects(QPainter& p) {
         if (obj.type == Enemy) {
             pm = &m_enemyPixmap;
             rows = 4; cols = 3; totalFrames = 11;
-         
         }
         else {
             pm = &m_meteoritePixmap;
             rows = 4; cols = 3; totalFrames = 11;
-
         }
 
         if (pm->isNull()) continue;
@@ -339,7 +327,6 @@ void SpaceWarWidget::drawObjects(QPainter& p) {
         QRect src(col * fw, row * fh, fw, fh);
         QRect target(obj.pos.x() - width() * 0.08 / 2, obj.pos.y() - height() * 0.12 / 2, width() * 0.08, height() * 0.12);
         p.drawPixmap(target, *pm, src);
-
 
         QRect target_up(obj.pos.x() - width() * 0.08 / 2 + 17.0 / 65.0 * 0.08 * width(), obj.pos.y() - height() * 0.12 / 2, width() * 0.08 * (32.0 / 65.0), height() * 0.12 * (15.0 / 55.0));
         p.drawPixmap(target_up, m_enemyUp);
@@ -390,7 +377,6 @@ void SpaceWarWidget::drawRewardWords(QPainter& p) {
     }
 }
 
-
 void SpaceWarWidget::initGame() {
     m_objects.clear();
     m_bullets.clear();
@@ -418,9 +404,7 @@ void SpaceWarWidget::stopGame() {
 
     m_bgmPlayer->stop();
 
-
     initGame();
-
 
     m_showMainMenu = true;
     m_startBtn->show();
@@ -629,7 +613,6 @@ void SpaceWarWidget::updateBullets() {
     for (auto& bullet : m_bullets) {
         if (!bullet.active) continue;
 
-
         GameObject* target = nullptr;
         for (auto& obj : m_objects) {
             if (!obj.exploded && obj.letter == bullet.targetLetter) {
@@ -639,11 +622,9 @@ void SpaceWarWidget::updateBullets() {
         }
         if (target) bullet.targetPos = target->pos;
 
-
         double dx = bullet.targetPos.x() - bullet.pos.x();
         double dy = bullet.targetPos.y() - bullet.pos.y();
         double desiredAngle = atan2(dy, dx);
-
 
         double diff = desiredAngle - bullet.currentAngle;  // ← 用存储的角度
         while (diff > PI) diff -= 2 * PI;
@@ -651,13 +632,11 @@ void SpaceWarWidget::updateBullets() {
 
         // 限制转向速率
         
-        bullet.currentAngle += qBound(-turnRate, diff, turnRate);  // ← 更新存储的角度
+        bullet.currentAngle += qBound(-TURN_RATE, diff, TURN_RATE);
 
-
-        constexpr double bulletSpeed = 40.0;
-        bullet.pos.rx() += bulletSpeed * cos(bullet.currentAngle);
-        bullet.pos.ry() += bulletSpeed * sin(bullet.currentAngle);
-
+        constexpr double kBulletSpeed = 40.0;
+        bullet.pos.rx() += kBulletSpeed * cos(bullet.currentAngle);
+        bullet.pos.ry() += kBulletSpeed * sin(bullet.currentAngle);
 
         if (!target && fabs(bullet.pos.x() - bullet.targetPos.x()) < 5 &&
             fabs(bullet.pos.y() - bullet.targetPos.y()) < 5) {
@@ -706,7 +685,6 @@ void SpaceWarWidget::checkCollisions() {
             explodeObject(&obj);
             m_lives--;
 
-            
             if (m_lives <= 0) {
                 checkEndGame();
             }
@@ -747,7 +725,6 @@ void SpaceWarWidget::checkEndGame() {
         m_upgradeTimer->stop();
         m_wordSpawnTimer->stop();
         m_playerAnimTimer->stop();
-        
     }
 }
 
@@ -794,7 +771,6 @@ void SpaceWarWidget::handleLetterInput(QChar letter) {
             if (rw.currentIndex == rw.text.size()) {
                 rw.finished = true;
                 m_lives = m_maxLives;
-                
             } 
             return;
         }
@@ -817,10 +793,8 @@ void SpaceWarWidget::handleLetterInput(QChar letter) {
             return;
         }
     }
-    
         m_score -= 400;
         if (m_testMode) m_wrongInputCount++;
-    
 }
 
 void SpaceWarWidget::onWordSpawnTimer() {
@@ -952,7 +926,6 @@ void SpaceWarWidget::onLLMWordReceived(QNetworkReply* reply) {
     m_llmWordPool.append(word);
 }
 
-
 void SpaceWarWidget::pauseGame() {
     if (!m_gameActive || m_gamePaused) return;
     m_gamePaused = true;
@@ -994,7 +967,6 @@ void SpaceWarWidget::resumeGame() {
     update();
 }
 
-
 void SpaceWarWidget::onStartClicked() {
     if (m_gamePaused) return;
     initGame();
@@ -1010,7 +982,6 @@ void SpaceWarWidget::onStartClicked() {
     if (m_rewardEnabled) m_wordSpawnTimer->start();
     m_playerAnimTimer->start();
 
-
     if (!m_testMode && m_soundEnabled && m_bgmPlayer->state() != QMediaPlayer::PlayingState) {
         m_bgmPlayer->play();
     }
@@ -1023,7 +994,6 @@ void SpaceWarWidget::onHighScoreClicked() {
         m_highScoreDialog->loadScores();
     }
 
-   
     m_highScoreDialog->exec();
 }
 
@@ -1070,7 +1040,6 @@ void SpaceWarWidget::onExitClicked() {
         if (m_gamePaused) resumeGame();
     }
 }
-
 
 void SpaceWarWidget::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Escape) {

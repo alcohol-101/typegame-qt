@@ -1,5 +1,9 @@
-#include "settingsdialog.h"
+// filename: settingsdialog.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Implementation of SettingsDialog
 
+#include "settingsdialog.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -18,7 +22,6 @@ constexpr double OK_BTN_X_RATIO = 0.38889;
 constexpr double CANCEL_BTN_X_RATIO = 0.58889;
 constexpr double DEFAULT_BTN_X_RATIO = 0.78889;
 constexpr double BTN_Y_RATIO = 0.85333;
-
 
 SettingsDialog::SettingsDialog(QWidget* parent)
     : QDialog(parent)
@@ -56,9 +59,9 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));
     m_clickSoundEffect->setVolume(1.0f);
 
-    okBtn->installEventFilter(this);
-    cancelBtn->installEventFilter(this);
-    defaultBtn->installEventFilter(this);
+    m_okBtn->installEventFilter(this);
+    m_cancelBtn->installEventFilter(this);
+    m_defaultBtn->installEventFilter(this);
 
     this->update();
 }
@@ -150,18 +153,18 @@ void SettingsDialog::setupUi()
     connect(m_soundCheckBox, &QCheckBox::toggled, this, &SettingsDialog::onSoundToggled);
 
     // 按钮行
-    okBtn = new QPushButton(this);
-    cancelBtn = new QPushButton(this);
-    defaultBtn = new QPushButton(this);
+    m_okBtn = new QPushButton(this);
+    m_cancelBtn = new QPushButton(this);
+    m_defaultBtn = new QPushButton(this);
 
-    qreal now_w = this->width();
-    qreal now_h = this->height();
+    qreal nowW = this->width();
+    qreal nowH = this->height();
 
-    qreal w = now_w * BUTTON_WIDTH_RATIO;
-    qreal h = now_h * BUTTON_HEIGHT_RATIO;
+    qreal w = nowW * BUTTON_WIDTH_RATIO;
+    qreal h = nowH * BUTTON_HEIGHT_RATIO;
 
-    okBtn->setFixedSize(w, h);
-    okBtn->setStyleSheet(R"(
+    m_okBtn->setFixedSize(w, h);
+    m_okBtn->setStyleSheet(R"(
         QPushButton {
             border-image: url(:/res/image/Common/Images/OK.png) 0 144 0 0;
             border: none;
@@ -170,8 +173,8 @@ void SettingsDialog::setupUi()
             border-image: url(:/res/image/Common/Images/OK.png) 0 72 0 72;
         }
     )");
-    cancelBtn->setFixedSize(w, h);
-    cancelBtn->setStyleSheet(R"(
+    m_cancelBtn->setFixedSize(w, h);
+    m_cancelBtn->setStyleSheet(R"(
         QPushButton {
             border-image: url(:/res/image/Common/Images/CANCEL.png) 0 144 0 0;
             border: none;
@@ -180,8 +183,8 @@ void SettingsDialog::setupUi()
             border-image: url(:/res/image/Common/Images/CANCEL.png) 0 72 0 72;
         }
     )");
-    defaultBtn->setFixedSize(w, h);
-    defaultBtn->setStyleSheet(R"(
+    m_defaultBtn->setFixedSize(w, h);
+    m_defaultBtn->setStyleSheet(R"(
         QPushButton {
             border-image: url(:/res/image/Common/Images/DEFAULT.png) 0 144 0 0;
             border: none;
@@ -198,9 +201,9 @@ void SettingsDialog::setupUi()
     mainLayout->addLayout(soundLayout);
     mainLayout->addStretch();
 
-    connect(okBtn, &QPushButton::clicked, this, &SettingsDialog::onOkClicked);
-    connect(cancelBtn, &QPushButton::clicked, this, &SettingsDialog::onCancelClicked);
-    connect(defaultBtn, &QPushButton::clicked, this, &SettingsDialog::onDefaultClicked);
+    connect(m_okBtn, &QPushButton::clicked, this, &SettingsDialog::onOkClicked);
+    connect(m_cancelBtn, &QPushButton::clicked, this, &SettingsDialog::onCancelClicked);
+    connect(m_defaultBtn, &QPushButton::clicked, this, &SettingsDialog::onDefaultClicked);
 
     // 初始化默认值
     m_levelSlider->setValue(1);
@@ -336,9 +339,9 @@ void SettingsDialog::resizeEvent(QResizeEvent* event)
     int w = width();
     int h = height();
 
-    okBtn->move(w * OK_BTN_X_RATIO, h * BTN_Y_RATIO);
-    cancelBtn->move(w * CANCEL_BTN_X_RATIO, h * BTN_Y_RATIO);
-    defaultBtn->move(w * DEFAULT_BTN_X_RATIO, h * BTN_Y_RATIO);
+    m_okBtn->move(w * OK_BTN_X_RATIO, h * BTN_Y_RATIO);
+    m_cancelBtn->move(w * CANCEL_BTN_X_RATIO, h * BTN_Y_RATIO);
+    m_defaultBtn->move(w * DEFAULT_BTN_X_RATIO, h * BTN_Y_RATIO);
 }
 
 bool SettingsDialog::eventFilter(QObject* obj, QEvent* event)

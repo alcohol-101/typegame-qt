@@ -1,3 +1,8 @@
+// filename: tst_tristatebutton.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-05-05
+// description: Unit tests for TriStateButton
+
 #include <QtTest>
 #include <QApplication>
 #include <QMouseEvent>
@@ -6,6 +11,8 @@
 class TestTriStateButton : public QObject
 {
     Q_OBJECT
+
+public:
 
 private slots:
     void initTestCase();

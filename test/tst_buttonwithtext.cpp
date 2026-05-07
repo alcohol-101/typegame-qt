@@ -1,3 +1,8 @@
+// filename: tst_buttonwithtext.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-05-05
+// description: Unit tests for ButtonWithText
+
 #include <QtTest>
 #include <QApplication>
 #include <QEvent>
@@ -7,6 +12,8 @@
 class TestButtonWithText : public QObject
 {
     Q_OBJECT
+
+public:
 
 private slots:
     void initTestCase();

@@ -1,10 +1,17 @@
+// filename: spacesettingsdialog.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Implementation of SpaceSettingsDialog
+
 #include "spacesettingsdialog.h"
-#include "exitconfirmdialog.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
 #include <QMouseEvent>
+
+#include "exitconfirmdialog.h"
 
 constexpr double BUTTON_WIDTH_RATIO = 0.17778;
 constexpr double BUTTON_HEIGHT_RATIO = 0.09333;
@@ -13,12 +20,16 @@ constexpr double CANCEL_BTN_X_RATIO = 0.58889;
 constexpr double DEFAULT_BTN_X_RATIO = 0.78889;
 constexpr double BTN_Y_RATIO = 0.85333;
 
-
-SpaceSettingsDialog::SpaceSettingsDialog(QWidget *parent)
+SpaceSettingsDialog::SpaceSettingsDialog(QWidget* parent)
     : QDialog(parent)
-    , m_enemyMaxSlider(nullptr), m_speedSlider(nullptr), m_upgradeIntervalSlider(nullptr)
-    , m_enemyMaxLabel(nullptr), m_speedLabel(nullptr), m_upgradeIntervalLabel(nullptr)
-    , m_rewardCheckBox(nullptr), m_valuesChanged(false)
+    , m_enemyMaxSlider(nullptr)
+    , m_speedSlider(nullptr)
+    , m_upgradeIntervalSlider(nullptr)
+    , m_enemyMaxLabel(nullptr)
+    , m_speedLabel(nullptr)
+    , m_upgradeIntervalLabel(nullptr)
+    , m_rewardCheckBox(nullptr)
+    , m_valuesChanged(false)
 {
     setFixedSize(900, 600);
     setWindowFlags(Qt::FramelessWindowHint);
@@ -33,17 +44,17 @@ SpaceSettingsDialog::SpaceSettingsDialog(QWidget *parent)
     m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));
     m_clickSoundEffect->setVolume(1.0f);
 
-    okBtn->installEventFilter(this);
-    cancelBtn->installEventFilter(this);
-    defaultBtn->installEventFilter(this);
+    m_okBtn->installEventFilter(this);
+    m_cancelBtn->installEventFilter(this);
+    m_defaultBtn->installEventFilter(this);
 }
 
 void SpaceSettingsDialog::setupUi()
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
-    QHBoxLayout *enemyLayout = new QHBoxLayout;
-    QLabel *enemyLabel = new QLabel(tr("敌机最大同屏数量 :"), this);
+    QHBoxLayout* enemyLayout = new QHBoxLayout;
+    QLabel* enemyLabel = new QLabel(tr("敌机最大同屏数量 :"), this);
     m_enemyMaxSlider = new QSlider(Qt::Horizontal, this);
     m_enemyMaxSlider->setRange(1, 10);
     m_enemyMaxLabel = new QLabel("3", this);
@@ -55,8 +66,8 @@ void SpaceSettingsDialog::setupUi()
     enemyLayout->addStretch(2);
     connect(m_enemyMaxSlider, &QSlider::valueChanged, this, &SpaceSettingsDialog::onEnemyMaxChanged);
 
-    QHBoxLayout *speedLayout = new QHBoxLayout;
-    QLabel *speedLabel = new QLabel(tr("速度 :"), this);
+    QHBoxLayout* speedLayout = new QHBoxLayout;
+    QLabel* speedLabel = new QLabel(tr("速度 :"), this);
     m_speedSlider = new QSlider(Qt::Horizontal, this);
     m_speedSlider->setRange(1, 10);
     m_speedLabel = new QLabel("3", this);
@@ -68,8 +79,8 @@ void SpaceSettingsDialog::setupUi()
     speedLayout->addStretch(2);
     connect(m_speedSlider, &QSlider::valueChanged, this, &SpaceSettingsDialog::onSpeedChanged);
 
-    QHBoxLayout *intervalLayout = new QHBoxLayout;
-    QLabel *intervalLabel = new QLabel(tr("难度升级间隔(秒) :"), this);
+    QHBoxLayout* intervalLayout = new QHBoxLayout;
+    QLabel* intervalLabel = new QLabel(tr("难度升级间隔(秒) :"), this);
     m_upgradeIntervalSlider = new QSlider(Qt::Horizontal, this);
     m_upgradeIntervalSlider->setRange(30, 600);
     m_upgradeIntervalLabel = new QLabel("120", this);
@@ -81,8 +92,8 @@ void SpaceSettingsDialog::setupUi()
     intervalLayout->addStretch(2);
     connect(m_upgradeIntervalSlider, &QSlider::valueChanged, this, &SpaceSettingsDialog::onUpgradeIntervalChanged);
 
-    QHBoxLayout *rewardLayout = new QHBoxLayout;
-    QLabel *rewardLabel = new QLabel(tr("奖励模式 :"), this);
+    QHBoxLayout* rewardLayout = new QHBoxLayout;
+    QLabel* rewardLabel = new QLabel(tr("奖励模式 :"), this);
     m_rewardCheckBox = new QCheckBox(this);
     m_rewardCheckBox->setChecked(false);
     rewardLayout->addStretch(16);
@@ -94,17 +105,17 @@ void SpaceSettingsDialog::setupUi()
 
     qreal w = width() * BUTTON_WIDTH_RATIO;
     qreal h = height() * BUTTON_HEIGHT_RATIO;
-    okBtn = new QPushButton(this);
-    okBtn->setFixedSize(w, h);
-    okBtn->setStyleSheet("QPushButton{ border-image: url(:/res/image/Common/Images/OK.png) 0 144 0 0; border:none; }"
+    m_okBtn = new QPushButton(this);
+    m_okBtn->setFixedSize(w, h);
+    m_okBtn->setStyleSheet("QPushButton{ border-image: url(:/res/image/Common/Images/OK.png) 0 144 0 0; border:none; }"
                          "QPushButton:hover{ border-image: url(:/res/image/Common/Images/OK.png) 0 72 0 72; }");
-    cancelBtn = new QPushButton(this);
-    cancelBtn->setFixedSize(w, h);
-    cancelBtn->setStyleSheet("QPushButton{ border-image: url(:/res/image/Common/Images/CANCEL.png) 0 144 0 0; border:none; }"
+    m_cancelBtn = new QPushButton(this);
+    m_cancelBtn->setFixedSize(w, h);
+    m_cancelBtn->setStyleSheet("QPushButton{ border-image: url(:/res/image/Common/Images/CANCEL.png) 0 144 0 0; border:none; }"
                              "QPushButton:hover{ border-image: url(:/res/image/Common/Images/CANCEL.png) 0 72 0 72; }");
-    defaultBtn = new QPushButton(this);
-    defaultBtn->setFixedSize(w, h);
-    defaultBtn->setStyleSheet("QPushButton{ border-image: url(:/res/image/Common/Images/DEFAULT.png) 0 144 0 0; border:none; }"
+    m_defaultBtn = new QPushButton(this);
+    m_defaultBtn->setFixedSize(w, h);
+    m_defaultBtn->setStyleSheet("QPushButton{ border-image: url(:/res/image/Common/Images/DEFAULT.png) 0 144 0 0; border:none; }"
                               "QPushButton:hover{ border-image: url(:/res/image/Common/Images/DEFAULT.png) 0 72 0 72; }");
 
     mainLayout->addLayout(enemyLayout);
@@ -113,9 +124,9 @@ void SpaceSettingsDialog::setupUi()
     mainLayout->addLayout(rewardLayout);
     mainLayout->addStretch();
 
-    connect(okBtn, &QPushButton::clicked, this, &SpaceSettingsDialog::onOkClicked);
-    connect(cancelBtn, &QPushButton::clicked, this, &SpaceSettingsDialog::onCancelClicked);
-    connect(defaultBtn, &QPushButton::clicked, this, &SpaceSettingsDialog::onDefaultClicked);
+    connect(m_okBtn, &QPushButton::clicked, this, &SpaceSettingsDialog::onOkClicked);
+    connect(m_cancelBtn, &QPushButton::clicked, this, &SpaceSettingsDialog::onCancelClicked);
+    connect(m_defaultBtn, &QPushButton::clicked, this, &SpaceSettingsDialog::onDefaultClicked);
 
     m_enemyMaxSlider->setValue(3);
     m_speedSlider->setValue(3);
@@ -208,23 +219,23 @@ void SpaceSettingsDialog::onDefaultClicked()
     m_valuesChanged = true;
 }
 
-void SpaceSettingsDialog::resizeEvent(QResizeEvent *event)
+void SpaceSettingsDialog::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
-    okBtn->move(width() * OK_BTN_X_RATIO, height() * BTN_Y_RATIO);
-    cancelBtn->move(width() * CANCEL_BTN_X_RATIO, height() * BTN_Y_RATIO);
-    defaultBtn->move(width() * DEFAULT_BTN_X_RATIO, height() * BTN_Y_RATIO);
+    m_okBtn->move(width() * OK_BTN_X_RATIO, height() * BTN_Y_RATIO);
+    m_cancelBtn->move(width() * CANCEL_BTN_X_RATIO, height() * BTN_Y_RATIO);
+    m_defaultBtn->move(width() * DEFAULT_BTN_X_RATIO, height() * BTN_Y_RATIO);
 }
 
-bool SpaceSettingsDialog::eventFilter(QObject *obj, QEvent *event)
+bool SpaceSettingsDialog::eventFilter(QObject* obj, QEvent* event)
 {
-    QAbstractButton *btn = qobject_cast<QAbstractButton *>(obj);
+    QAbstractButton* btn = qobject_cast<QAbstractButton *>(obj);
     if (!btn || !btn->isEnabled()) return QWidget::eventFilter(obj, event);
     if (event->type() == QEvent::Enter) {
         if (m_hoverSoundEffect && m_hoverSoundEffect->isLoaded()) m_hoverSoundEffect->play();
     }
     if (event->type() == QEvent::MouseButtonPress) {
-        QMouseEvent *me = static_cast<QMouseEvent *>(event);
+        QMouseEvent* me = static_cast<QMouseEvent *>(event);
         if (me->button() == Qt::LeftButton && m_clickSoundEffect && m_clickSoundEffect->isLoaded())
             m_clickSoundEffect->play();
     }

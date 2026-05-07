@@ -1,3 +1,8 @@
+// filename: tst_applelogic.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-05-06
+// description: Unit tests for AppleGameWidget game logic
+
 #include <QtTest>
 #include <QApplication>
 #include <QKeyEvent>
@@ -6,6 +11,8 @@
 class TestAppleGameWidget : public QObject
 {
     Q_OBJECT
+
+public:
 
 private slots:
     void initTestCase();

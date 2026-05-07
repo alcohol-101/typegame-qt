@@ -1,4 +1,9 @@
-﻿#include "buttonwithtext.h"
+// filename: buttonwithtext.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Implementation of ButtonWithText
+
+#include "buttonwithtext.h"
 #include <QEvent>
 #include <QMouseEvent>
 #include <QPixmap>
@@ -100,7 +105,6 @@ void ButtonWithText::setLabelStyle(const QString& styleSheet)
     }
 }
 
-
 bool ButtonWithText::eventFilter(QObject* obj, QEvent* event)
 {
     if ((obj == m_label || obj == m_map) &&
@@ -108,7 +112,6 @@ bool ButtonWithText::eventFilter(QObject* obj, QEvent* event)
         click();
         return true;
     }
-
 
     return QPushButton::eventFilter(obj, event);
 }

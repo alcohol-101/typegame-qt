@@ -1,5 +1,10 @@
-#ifndef APPLEGAMEWIDGET_H
-#define APPLEGAMEWIDGET_H
+// filename: applegamewidget.h
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Apple catching typing game widget
+
+#ifndef _TYPEGAME_APPLEGAMEWIDGET_H_
+#define _TYPEGAME_APPLEGAMEWIDGET_H_
 
 #include <QWidget>
 #include <QTimer>
@@ -19,7 +24,6 @@
 #include <QDebug>
 #include <cmath>
 #include <QJsonObject>
-
 
 class QPushButton;
 class QLabel;
@@ -59,11 +63,7 @@ public:
     int getWrongInputCount() const { return m_wrongInputCount; }
     int getMaxHealth() const { return m_maxBadAppleCount; }
     int getCurrentHealth() const { return m_maxBadAppleCount - m_badCount; }
-    int activeAppleCount() const {
-        int count = 0;
-        for (const Apple& a : m_apples) if (!a.isBad) ++count;
-        return count;
-    }
+    int activeAppleCount() const;
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -71,7 +71,6 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
     bool eventFilter(QObject* obj, QEvent* event) override;
-
 
 private slots:
     void onStartClicked();
@@ -81,7 +80,6 @@ private slots:
     void onExitClicked();
     void onUpdateTimer();
     void onAppleBadTimeout();   // 处理坏苹果消失
-
     void applySettings(int level, int targetCount, int maxBadCount, int maxAppleCount, bool soundEnabled);
 
 private:
@@ -138,11 +136,6 @@ private:
     // 设置对话框指针（避免重复创建）
     SettingsDialog* m_settingsDialog;
 
-    QScreen* screen = QApplication::primaryScreen();
-    QRect fullGeometry = screen->geometry();
-    double w_primary = fullGeometry.width();
-    double h_primary = fullGeometry.height();
-
     //命令行测试相关成员
     bool m_testMode = false;
     QString m_testLetters;
@@ -151,4 +144,4 @@ private:
 
 };
 
-#endif // APPLEGAMEWIDGET_H
+#endif // _TYPEGAME_APPLEGAMEWIDGET_H_

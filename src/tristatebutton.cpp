@@ -1,3 +1,8 @@
+// filename: tristatebutton.cpp
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Implementation of TriStateButton
+
 #include "tristatebutton.h"
 #include <QPainter>
 #include <QPaintEvent>
@@ -51,10 +56,8 @@ void TriStateButton::enterEvent(QEvent* event)
         m_state = Hover;
 
         if (m_hoverSound && m_hoverSound->isLoaded()) {
-            m_hoverSound->play();
-            
+            m_hoverSound->play();    
         }
-
         update();
     }
     QPushButton::enterEvent(event);
@@ -78,7 +81,6 @@ void TriStateButton::mousePressEvent(QMouseEvent* event)
         if ( m_pressedSound && m_pressedSound->isLoaded()) {
             m_pressedSound->play();
         }
-
         update();
     }
     QPushButton::mousePressEvent(event);

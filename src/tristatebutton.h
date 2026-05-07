@@ -1,5 +1,10 @@
-#ifndef TRISTATEBUTTON_H
-#define TRISTATEBUTTON_H
+// filename: tristatebutton.h
+// creator: alcohol-101@users.noreply.github.com
+// date: 2026-04
+// description: Three-state button (Normal/Hover/Pressed) using sprite sheet
+
+#ifndef _TYPEGAME_TRISTATEBUTTON_H_
+#define _TYPEGAME_TRISTATEBUTTON_H_
 
 #include <QPushButton>
 #include <QPixmap>
@@ -31,4 +36,4 @@ private:
     QSoundEffect* m_pressedSound = nullptr;
 };
 
-#endif // TRISTATEBUTTON_H
+#endif // _TYPEGAME_TRISTATEBUTTON_H_
