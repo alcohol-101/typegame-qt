@@ -12,7 +12,6 @@
 #include <QElapsedTimer>
 #include <QRandomGenerator>
 #include <QMediaPlayer>
-#include <QSoundEffect> 
 #include <QPainter>
 #include <QKeyEvent>
 #include <QPushButton>
@@ -28,6 +27,7 @@
 class QPushButton;
 class QLabel;
 class SettingsDialog;
+class LowLatencySound;
 
 struct Apple {
     QChar letter;
@@ -129,9 +129,9 @@ private:
     QSize m_smallAppleSize;
 
     QMediaPlayer* m_bgmPlayer;
-    QSoundEffect* m_hoverSoundEffect;
-    QSoundEffect* m_clickSoundEffect;
-    QSoundEffect* m_successSoundEffect;
+    LowLatencySound* m_hoverSoundEffect = nullptr;
+    LowLatencySound* m_clickSoundEffect = nullptr;
+    LowLatencySound* m_successSoundEffect = nullptr;
 
     // 设置对话框指针（避免重复创建）
     SettingsDialog* m_settingsDialog;

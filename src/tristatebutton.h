@@ -8,7 +8,8 @@
 
 #include <QPushButton>
 #include <QPixmap>
-#include <QSoundEffect>
+
+class LowLatencySound;
 
 class TriStateButton : public QPushButton
 {
@@ -32,8 +33,8 @@ private:
     enum State { Normal, Hover, Pressed };
     State m_state;
 
-    QSoundEffect* m_hoverSound = nullptr;
-    QSoundEffect* m_pressedSound = nullptr;
+    LowLatencySound* m_hoverSound = nullptr;
+    LowLatencySound* m_pressedSound = nullptr;
 };
 
 #endif // _TYPEGAME_TRISTATEBUTTON_H_

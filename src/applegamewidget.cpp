@@ -4,6 +4,7 @@
 // description: Implementation of AppleGameWidget game logic and rendering
 
 #include "applegamewidget.h"
+#include "lowlatencysound.h"
 
 #include "settingsdialog.h"
 #include "exitconfirmdialog.h"
@@ -169,17 +170,9 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
             }
         });
 
-    m_hoverSoundEffect = new QSoundEffect(this);
-    m_hoverSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/ANIBTN_ENTER.wav"));
-    m_hoverSoundEffect->setVolume(1.0f);
-
-    m_clickSoundEffect = new QSoundEffect(this);
-    m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));
-    m_clickSoundEffect->setVolume(1.0f);
-
-    m_successSoundEffect = new QSoundEffect(this);
-    m_successSoundEffect->setSource(QUrl("qrc:/res/image/Apple/Sounds/APPLE_IN.wav"));
-    m_successSoundEffect->setVolume(1.0f);
+    m_hoverSoundEffect = new LowLatencySound("qrc:/res/image/Common/Sounds/ANIBTN_ENTER.wav", this);
+    m_clickSoundEffect = new LowLatencySound("qrc:/res/image/Common/Sounds/BTN_CLICK.wav", this);
+    m_successSoundEffect = new LowLatencySound("qrc:/res/image/Apple/Sounds/APPLE_IN.wav", this);
 
     // 安装事件过滤器到自身，这样会监听本窗口及所有子控件的事件
     m_exitBtn->installEventFilter(this);
@@ -450,7 +443,7 @@ void AppleGameWidget::removeAppleByLetter(QChar letter)
             m_apples.removeAt(i);
             m_successCount++;
 
-            if (m_soundEnabled && m_successSoundEffect && m_successSoundEffect->isLoaded()) {
+            if (m_soundEnabled && m_successSoundEffect && m_successSoundEffect->isValid()) {
                 m_successSoundEffect->play();
             }
 
@@ -766,7 +759,7 @@ bool AppleGameWidget::eventFilter(QObject* obj, QEvent* event)
     }
 
     if (event->type() == QEvent::Enter) {
-        if (m_soundEnabled && m_hoverSoundEffect && m_hoverSoundEffect->isLoaded()) {
+        if (m_soundEnabled && m_hoverSoundEffect && m_hoverSoundEffect->isValid()) {
             m_hoverSoundEffect->play();
         }
     }
@@ -774,7 +767,7 @@ bool AppleGameWidget::eventFilter(QObject* obj, QEvent* event)
     if (event->type() == QEvent::MouseButtonPress) {
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         if (mouseEvent->button() == Qt::LeftButton) {
-            if (m_soundEnabled && m_clickSoundEffect && m_clickSoundEffect->isLoaded()) {
+            if (m_soundEnabled && m_clickSoundEffect && m_clickSoundEffect->isValid()) {
                 m_clickSoundEffect->play();
             }
         }

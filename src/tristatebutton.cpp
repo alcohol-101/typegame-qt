@@ -4,6 +4,7 @@
 // description: Implementation of TriStateButton
 
 #include "tristatebutton.h"
+#include "lowlatencysound.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>
@@ -23,9 +24,6 @@ TriStateButton::TriStateButton(const QString& imagePath, QWidget* parent)
         m_frames[1] = fullPixmap.copy(frameWidth, 0, frameWidth, frameHeight);
         m_frames[2] = fullPixmap.copy(frameWidth * 2, 0, frameWidth, frameHeight);
     }
-
-    m_hoverSound = new QSoundEffect(this);
-    m_pressedSound = new QSoundEffect(this);
 
     setCursor(Qt::PointingHandCursor);
     setAttribute(Qt::WA_Hover, true);
@@ -55,8 +53,8 @@ void TriStateButton::enterEvent(QEvent* event)
     if (m_state != Pressed) {
         m_state = Hover;
 
-        if (m_hoverSound && m_hoverSound->isLoaded()) {
-            m_hoverSound->play();    
+        if (m_hoverSound && m_hoverSound->isValid()) {
+            m_hoverSound->play();
         }
         update();
     }
@@ -78,7 +76,7 @@ void TriStateButton::mousePressEvent(QMouseEvent* event)
     if (event->button() == Qt::LeftButton) {
         m_state = Pressed;
 
-        if ( m_pressedSound && m_pressedSound->isLoaded()) {
+        if (m_pressedSound && m_pressedSound->isValid()) {
             m_pressedSound->play();
         }
         update();
@@ -102,14 +100,14 @@ void TriStateButton::mouseReleaseEvent(QMouseEvent* event)
 
 void TriStateButton::setHoverSound(const QString& soundPath)
 {
-    if (m_hoverSound && !soundPath.isEmpty()) {
-        m_hoverSound->setSource(QUrl(soundPath));
+    if (!soundPath.isEmpty()) {
+        m_hoverSound = new LowLatencySound(soundPath, this);
     }
 }
 
 void TriStateButton::setPressedSound(const QString& soundPath)
 {
-    if (m_pressedSound && !soundPath.isEmpty()) {
-        m_pressedSound->setSource(QUrl(soundPath));
+    if (!soundPath.isEmpty()) {
+        m_pressedSound = new LowLatencySound(soundPath, this);
     }
 }
