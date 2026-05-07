@@ -23,13 +23,13 @@ build\bin\Release\typegame.exe space --test --input test_config_space.json --out
 
 ### 单元测试
 
-运行 `run_tests.bat`（9 个 Qt Test 用例）。
+运行 `run_tests.bat`（8 个 Qt Test 用例）。
 
 ### 产物
 
 ```
 build\bin\Release\typegame.exe          # 主程序
-build\test\Release\tst_*.exe            # 单元测试（9 个）
+build\test\Release\tst_*.exe            # 单元测试（8 个）
 ```
 
 ---
@@ -63,9 +63,8 @@ build\test\Release\tst_*.exe            # 单元测试（9 个）
 | **UI 组件** | 图文按钮（hover 变色） | `buttonwithtext.*` |
 | | 三态按钮（Normal/Hover/Press + 音效） | `tristatebutton.*` |
 | | 设置弹窗 / 退出确认 / 高分榜 / 昵称输入 | `settingsdialog.*` `exitconfirmdialog.*` `highscoredialog.*` `nameinputdialog.*` |
-| **音效** | 预解码 PCM 低延迟音效播放 | `lowlatencysound.*` |
 | **测试** | CLI 集成测试框架（JSON 驱动） | `gametestrunner.*` |
-| | Qt Test 单元测试（9 个） | `test/tst_*.cpp` |
+| | Qt Test 单元测试（8 个） | `test/tst_*.cpp` |
 | **资源** | 运行时动态注册 .rcc 资源文件 | `respath.h` |
 
 ### 资源管理策略
@@ -81,7 +80,7 @@ build\test\Release\tst_*.exe            # 单元测试（9 个）
 **双层测试体系**：
 
 1. **CLI 集成测试**（`GameTestRunner`）：模拟键盘输入，JSON 配置驱动，支持 `AllCorrect` / `AllWrong` / `WithErrors` 三种模式，输出结构化 JSON 报告
-2. **Qt Test 单元测试**（9 个）：覆盖 ButtonWithText、TriStateButton、NameInputDialog、HighScoreDialog、ExitConfirmDialog、AppleGameWidget、SpaceWarWidget、MainWindow、LowLatencySound
+2. **Qt Test 单元测试**（8 个）：覆盖 ButtonWithText、TriStateButton、NameInputDialog、HighScoreDialog、ExitConfirmDialog、AppleGameWidget、SpaceWarWidget、MainWindow
 
 ---
 
@@ -89,7 +88,7 @@ build\test\Release\tst_*.exe            # 单元测试（9 个）
 
 - **渲染**：所有 Pixmap 在构造函数中一次性加载，paintEvent 只做 `drawPixmap()`，无运行时 I/O
 - **动画**：使用 Sprite Sheet（单张图片包含多帧），通过 `QPixmap::copy()` 切帧，无逐帧文件读取
-- **音效**：自研 `LowLatencySound` — 启动时 WAV 预解码为原始 PCM buffer，hover 时通过 `QAudioOutput` 直接写入音频设备，延迟从 QSoundEffect 的 50-100ms 压缩到 5ms 以内；背景音乐用 `QMediaPlayer` + `EndOfMedia` 信号循环
+- **音效**：短音效用 `QSoundEffect`（低延迟预加载），通过静音 QMediaPlayer 循环保持音频设备热启动消除冷延迟；背景音乐用 `QMediaPlayer` + `EndOfMedia` 信号循环
 - **主循环**：统一 33fps 定时器驱动（~30ms 间隔），在一个 tick 内完成生成、移动、碰撞、绘制
 - **容器操作**：列表遍历删除使用反向迭代，避免索引偏移
 - **布局**：所有尺寸使用屏幕宽高比计算，一次 resizeEvent 重新布局，无布局管理器递归开销
@@ -100,7 +99,6 @@ build\test\Release\tst_*.exe            # 单元测试（9 个）
 
 ## 亮点
 
-- **低延迟音效引擎**：`LowLatencySound` 在构造时通过 `QResource` 直接读取 WAV 资源到内存，解析 RIFF 头后存储原始 PCM 数据，`play()` 时绕过解码环节直接推送音频设备，消除 QSoundEffect 的首帧启动延迟
 - **双层测试体系**：CLI 集成测试 + Qt Test 单元测试，覆盖正向/错误/全错场景
 - **LLM 单词生成**：集成 DeepSeek API，异步生成计算机领域英文单词作为奖励单词，带预填充池和频率控制
 - **追踪子弹**：子弹使用比例导引法（turn-rate limited），平滑转向追踪目标敌机

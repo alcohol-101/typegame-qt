@@ -165,7 +165,8 @@ private:
     QPixmap m_mainMenuBackground;
     QPixmap m_gameBackground;
 
-    QMediaPlayer* m_bgmPlayer=nullptr;
+    QMediaPlayer* m_bgmPlayer = nullptr;
+    QMediaPlayer* m_silentPlayer = nullptr;
     bool m_soundEnabled = true;
 
     QSoundEffect* m_shootSound = nullptr;

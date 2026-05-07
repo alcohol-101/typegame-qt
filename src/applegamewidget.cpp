@@ -4,7 +4,6 @@
 // description: Implementation of AppleGameWidget game logic and rendering
 
 #include "applegamewidget.h"
-#include "lowlatencysound.h"
 
 #include "settingsdialog.h"
 #include "exitconfirmdialog.h"
@@ -158,6 +157,11 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
     m_pauseBtn->setEnabled(false);
     m_stopBtn->setEnabled(false);
 
+    m_silentPlayer = new QMediaPlayer(this);
+    m_silentPlayer->setMedia(QUrl("qrc:/res/image/Common/Sounds/SILENT_LOOP.wav"));
+    m_silentPlayer->setVolume(0);
+    m_silentPlayer->play();
+
     m_bgmPlayer = new QMediaPlayer(this);
     m_bgmPlayer->setMedia(QUrl("qrc:/res/image/Apple/Sounds/APPLE_BG.mp3"));
     m_bgmPlayer->setVolume(50);
@@ -170,9 +174,17 @@ AppleGameWidget::AppleGameWidget(QWidget* parent)
             }
         });
 
-    m_hoverSoundEffect = new LowLatencySound("qrc:/res/image/Common/Sounds/ANIBTN_ENTER.wav", this);
-    m_clickSoundEffect = new LowLatencySound("qrc:/res/image/Common/Sounds/BTN_CLICK.wav", this);
-    m_successSoundEffect = new LowLatencySound("qrc:/res/image/Apple/Sounds/APPLE_IN.wav", this);
+    m_hoverSoundEffect = new QSoundEffect(this);
+    m_hoverSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/ANIBTN_ENTER.wav"));
+    m_hoverSoundEffect->setVolume(1.0f);
+
+    m_clickSoundEffect = new QSoundEffect(this);
+    m_clickSoundEffect->setSource(QUrl("qrc:/res/image/Common/Sounds/BTN_CLICK.wav"));
+    m_clickSoundEffect->setVolume(1.0f);
+
+    m_successSoundEffect = new QSoundEffect(this);
+    m_successSoundEffect->setSource(QUrl("qrc:/res/image/Apple/Sounds/APPLE_IN.wav"));
+    m_successSoundEffect->setVolume(1.0f);
 
     // 安装事件过滤器到自身，这样会监听本窗口及所有子控件的事件
     m_exitBtn->installEventFilter(this);
@@ -443,7 +455,7 @@ void AppleGameWidget::removeAppleByLetter(QChar letter)
             m_apples.removeAt(i);
             m_successCount++;
 
-            if (m_soundEnabled && m_successSoundEffect && m_successSoundEffect->isValid()) {
+            if (m_soundEnabled && m_successSoundEffect && m_successSoundEffect->isLoaded()) {
                 m_successSoundEffect->play();
             }
 
@@ -688,7 +700,7 @@ void AppleGameWidget::keyPressEvent(QKeyEvent* event)
             int before = m_apples.size();
             removeAppleByLetter(ch);
 
-			if (m_testMode) {//测试模式下新增逻辑：如果输入无效（没有移除苹果），增加错误计数
+			if (m_testMode) {
                 if (m_apples.size() == before) {
                     m_wrongInputCount++;
                 }
@@ -759,7 +771,7 @@ bool AppleGameWidget::eventFilter(QObject* obj, QEvent* event)
     }
 
     if (event->type() == QEvent::Enter) {
-        if (m_soundEnabled && m_hoverSoundEffect && m_hoverSoundEffect->isValid()) {
+        if (m_soundEnabled && m_hoverSoundEffect && m_hoverSoundEffect->isLoaded()) {
             m_hoverSoundEffect->play();
         }
     }
@@ -767,7 +779,7 @@ bool AppleGameWidget::eventFilter(QObject* obj, QEvent* event)
     if (event->type() == QEvent::MouseButtonPress) {
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         if (mouseEvent->button() == Qt::LeftButton) {
-            if (m_soundEnabled && m_clickSoundEffect && m_clickSoundEffect->isValid()) {
+            if (m_soundEnabled && m_clickSoundEffect && m_clickSoundEffect->isLoaded()) {
                 m_clickSoundEffect->play();
             }
         }

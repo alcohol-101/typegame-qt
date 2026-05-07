@@ -1,8 +1,8 @@
 @echo off
-chcp 65001 > nul
+chcp 65001 > /dev/null
 
 echo ========================================
-echo    TypeGame Unit Tests (9 cases)
+echo    TypeGame Unit Tests (8 cases)
 echo ========================================
 
 if defined VCPKG_ROOT (

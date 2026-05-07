@@ -64,6 +64,7 @@
         <file>image/Space/Sounds/SPACE_SHOOT.wav</file>
         <file>image/Space/Sounds/SPACE_WORDOUT.wav</file>
         <file>image/Space/Sounds/UPGRADE.wav</file>
+        <file>image/Common/Sounds/SILENT_LOOP.wav</file>
     </qresource>
     <qresource prefix="/data">
         <file>data/word.txt</file>

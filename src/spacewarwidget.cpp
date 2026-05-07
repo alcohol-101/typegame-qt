@@ -155,6 +155,11 @@ SpaceWarWidget::SpaceWarWidget(QWidget* parent)
     m_bonusSound = new QSoundEffect(this);
     m_bonusSound->setSource(QUrl("qrc:/res/image/Space/Sounds/SPACE_WORDOUT.wav"));
 
+    m_silentPlayer = new QMediaPlayer(this);
+    m_silentPlayer->setMedia(QUrl("qrc:/res/image/Common/Sounds/SILENT_LOOP.wav"));
+    m_silentPlayer->setVolume(0);
+    m_silentPlayer->play();
+
     m_scoreFilePath = ResPath("data/space_highscores.txt");
 
     // 初始位置将在 resizeEvent 中设置
