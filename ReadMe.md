@@ -22,8 +22,6 @@
 |---|---|
 | ![拯救苹果](docs/demo-apple.gif) | ![太空大战](docs/demo-space.gif) |
 
-> TODO(本人填写)：把录屏/截图放到 `docs/` 目录，替换上面的路径。
-> 建议用 GIF（<5 MB）或短视频外链，避免仓库体积膨胀。
 ---
 
 ## 构建 & 运行
@@ -136,7 +134,7 @@ build\test\Release\tst_*.exe            # 单元测试（8 个）
 
 ## 已知问题
 
-- **API Key 硬编码**：`spacewarwidget.cpp` 中 DeepSeek API Key 已改为优先读环境变量 `DEEPSEEK_API_KEY`，但仍有默认值 fallback
+- **API Key 需自备**：`spacewarwidget.cpp` 优先读环境变量 `DEEPSEEK_API_KEY`，仓库中不含任何真实密钥；使用 LLM 奖励单词功能前请自行设置该环境变量
 - **主线程网络请求**：LLM API 调用使用 `QNetworkAccessManager`（异步）但未做请求超时/重试处理
 - **资源加载无容错**：多处 `pixmap.load()` 未检查返回值，加载失败时静默降级
 - **三个游戏入口未实现**：「生死时速」「鼠的故事」「激流勇进」有 UI 按钮但点击无实际功能
