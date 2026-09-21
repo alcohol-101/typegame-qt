@@ -1,0 +1,13 @@
+# --- 由实习单位提供的游戏素材：版权不属于本项目，不随仓库分发 ---
+image/
+res_game.rcc
+
+# --- 构建产物 ---
+.vs
+.vscode
+*.exe
+*.obj
+*.user
+Debug/
+x64/
+build/

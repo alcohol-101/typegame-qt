@@ -1,10 +1,6 @@
 <RCC>
-    <qresource prefix="/res">
-        <file>image/title_left.png</file>
-        <file>image/live.png</file>
-        <file>image/mouse.png</file>
-        <file>image/apple.png</file>
-        <file>image/space.png</file>
-        <file>image/water.png</file>
+    <qresource prefix="/data">
+        <file>data/word.txt</file>
+        <file>data/space_highscores.txt</file>
     </qresource>
 </RCC>
